@@ -33,10 +33,14 @@ func (userServiceImpl *UserServiceImpl) Create(ctx context.Context, request user
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	_, err = userServiceImpl.UserRepository.FindById(ctx, tx, request.Id)
+	userIsExist, _ := userServiceImpl.UserRepository.FindById(ctx, tx, request.Id)
+	//if err != nil {
+	//	panic(exception.NewNotFoundError(err.Error()))
+	//}
 
-	if err != nil {
-		panic(exception.NewNotFoundError(err.Error()))
+	//check if user id exist return error
+	if userIsExist.Id != "" {
+		panic(exception.NewBadRequestError("user already exist"))
 	}
 
 	dataUser := domain.User{Id: request.Id, Username: request.Username, DisplayName: request.DisplayName, Email: request.Email, Password: request.Password}
@@ -78,6 +82,9 @@ func (userServiceImpl *UserServiceImpl) Update(ctx context.Context, request user
 	userData.Password = request.Password
 
 	userData = userServiceImpl.UserRepository.Update(ctx, tx, userData)
+
+	userData, err = userServiceImpl.UserRepository.FindById(ctx, tx, userData.Id)
+	helper.PanicIfError(err)
 
 	return helper.ToUserResponse(userData)
 }

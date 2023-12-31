@@ -16,6 +16,11 @@ func ErrorHandler(writer http.ResponseWriter, request *http.Request, exception i
 	if validationErrors(writer, request, exception) {
 		return
 	}
+
+	if userIsExistError(writer, request, exception) {
+		return
+	}
+
 	internalServerError(writer, request, exception)
 }
 
@@ -47,6 +52,26 @@ func notFoundError(writer http.ResponseWriter, request *http.Request, err interf
 		webResponse := web.WebResponse{
 			Code:   http.StatusNotFound,
 			Status: "NOT FOUND",
+			Data:   exception.Error,
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
+		return true
+	} else {
+		return false
+	}
+
+}
+
+func userIsExistError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
+	exception, ok := err.(BadRequestError)
+	if ok {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusBadRequest)
+
+		webResponse := web.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "BAD REQUEST",
 			Data:   exception.Error,
 		}
 
