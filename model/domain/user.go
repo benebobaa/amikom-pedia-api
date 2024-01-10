@@ -3,11 +3,13 @@ package domain
 import "time"
 
 type User struct {
-	Id          string
-	Username    string
-	DisplayName string
-	Email       string
-	Password    string
-	CreatedAt   time.Time
-	UpdateAt    time.Time
+	UUID      string
+	Email     string
+	Nim       string
+	Name      string
+	Username  string
+	Bio       string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

@@ -1,19 +1,15 @@
 package app
 
 import (
-	"amikom-pedia-api/controller"
 	"amikom-pedia-api/exception"
+	"amikom-pedia-api/module/user/user_controller"
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(categoryController controller.UserController) *httprouter.Router {
+func NewRouter(userController user_controller.UserController) *httprouter.Router {
 	router := httprouter.New()
 
-	router.GET("/api/users", categoryController.FindAll)
-	router.GET("/api/users/:userId", categoryController.FindById)
-	router.POST("/api/users", categoryController.Create)
-	router.PUT("/api/users/:userId", categoryController.Update)
-	router.DELETE("/api/users/:userId", categoryController.Delete)
+	router.POST("/api/v1/users", userController.Create)
 
 	router.PanicHandler = exception.ErrorHandler
 
