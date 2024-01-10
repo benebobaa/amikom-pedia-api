@@ -2,10 +2,10 @@ package main
 
 import (
 	"amikom-pedia-api/app"
-	"amikom-pedia-api/controller"
 	"amikom-pedia-api/helper"
-	"amikom-pedia-api/repository"
-	"amikom-pedia-api/service"
+	"amikom-pedia-api/module/user/user_controller"
+	"amikom-pedia-api/module/user/user_repository"
+	"amikom-pedia-api/module/user/user_service"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
@@ -15,11 +15,11 @@ import (
 func main() {
 	db := app.NewDB()
 	validate := validator.New()
-	categoryRepository := repository.NewUserRepository()
-	categoryService := service.NewUserService(categoryRepository, db, validate)
-	categoryController := controller.NewCategoryController(categoryService)
+	userRepository := user_repository.NewUserRepository()
+	userService := user_service.NewUserServiceImpl(userRepository, db, validate)
+	userController := user_controller.NewUserController(userService)
 
-	router := app.NewRouter(categoryController)
+	router := app.NewRouter(userController)
 
 	server := http.Server{
 		Addr:    "localhost:3000",

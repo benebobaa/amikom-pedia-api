@@ -19,7 +19,7 @@ func TestSendEmailWithGmail(t *testing.T) {
 
 	content := `
 		<h1> Hello, this is a announce email from Amikom Pedia! </h1>
-		<p> If you can read this email, it means that you are an eligible user to join Amikom Pedia. We are still in the process of developing our app with our teams. I hope you can patiently wait, and see you in the future. </p>
+		<p> If you can read this email, it means that you are an eligible user_service to join Amikom Pedia. We are still in the process of developing our app with our teams. I hope you can patiently wait, and see you in the future. </p>
 	`
 
 	to := []string{"benediktus@students.amikom.ac.id"}
