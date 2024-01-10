@@ -116,7 +116,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/CreateUserRegistration"
+                      "$ref": "#/components/schemas/CreateUserRegistrationResponse"
                     }
                   }
                 }
