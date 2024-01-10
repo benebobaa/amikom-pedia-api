@@ -5,6 +5,7 @@ import (
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/user"
 	"amikom-pedia-api/module/user/user_repository"
+	"amikom-pedia-api/utils"
 	"context"
 	"database/sql"
 	"github.com/go-playground/validator/v10"
@@ -33,13 +34,16 @@ func (userService *UserServiceImpl) Create(ctx context.Context, requestUser user
 
 	defer helper.CommitOrRollback(tx)
 
+	hashedPassword, err := utils.HashPassword(requestUser.Password)
+	helper.PanicIfError(err)
+
 	requestUserDomain := domain.User{
 		Email:    requestUser.Email,
 		Nim:      requestUser.Nim,
 		Name:     requestUser.Name,
 		Username: requestUser.Username,
 		Bio:      requestUser.Bio,
-		Password: requestUser.Password}
+		Password: hashedPassword}
 
 	result := userService.UserRepository.Create(ctx, tx, requestUserDomain)
 
