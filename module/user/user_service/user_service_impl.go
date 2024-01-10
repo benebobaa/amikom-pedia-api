@@ -1,6 +1,7 @@
 package user_service
 
 import (
+	"amikom-pedia-api/exception"
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/user"
@@ -56,8 +57,24 @@ func (userService *UserServiceImpl) Update(ctx context.Context) user.ResponseUse
 }
 
 func (userService *UserServiceImpl) FindByUUID(ctx context.Context, uuid string) user.ResponseUser {
-	//TODO implement me
-	panic("implement me")
+	err := userService.Validate.Var(uuid, "required")
+
+	helper.PanicIfError(err)
+
+	tx, err := userService.DB.Begin()
+
+	helper.PanicIfError(err)
+
+	defer helper.CommitOrRollback(tx)
+
+	userUUID := domain.User{UUID: uuid}
+
+	result, err := userService.UserRepository.FindByUUID(ctx, tx, userUUID)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	return helper.ToUserResponse(result)
 }
 
 func (userService *UserServiceImpl) FindAll(ctx context.Context) []user.ResponseUser {

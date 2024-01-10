@@ -10,6 +10,7 @@ func NewRouter(userController user_controller.UserController) *httprouter.Router
 	router := httprouter.New()
 
 	router.POST("/api/v1/users", userController.Create)
+	router.GET("/api/v1/users/:uuid", userController.FindByUUID)
 
 	router.PanicHandler = exception.ErrorHandler
 
