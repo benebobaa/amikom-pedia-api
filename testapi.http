@@ -1,0 +1,11 @@
+### Create a user
+POST http://localhost:3000/api/v1/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Hanif Al Irsyad",
+  "email": "coba@amikompedia.com",
+  "nim": "2024",
+  "password": "12345678"
+}

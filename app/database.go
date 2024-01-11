@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-func NewDB() *sql.DB {
-	db, err := sql.Open("postgres", "postgres://root:root@localhost:5432/amikom_pedia?sslmode=disable")
+func NewDB(dbDriver string, dbSource string) *sql.DB {
+	db, err := sql.Open(dbDriver, dbSource)
 	helper.PanicIfError(err)
 
 	db.SetMaxIdleConns(5)
