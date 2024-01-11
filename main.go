@@ -6,6 +6,7 @@ import (
 	"amikom-pedia-api/module/user/user_controller"
 	"amikom-pedia-api/module/user/user_repository"
 	"amikom-pedia-api/module/user/user_service"
+	"amikom-pedia-api/utils"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
@@ -13,7 +14,11 @@ import (
 )
 
 func main() {
-	db := app.NewDB()
+
+	config, err := utils.LoadConfig(".")
+	helper.PanicIfError(err)
+
+	db := app.NewDB(config.DBDriver, config.DBSource)
 	validate := validator.New()
 	userRepository := user_repository.NewUserRepository()
 	userService := user_service.NewUserServiceImpl(userRepository, db, validate)
@@ -26,7 +31,7 @@ func main() {
 		Handler: router,
 	}
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	helper.PanicIfError(err)
 	fmt.Println("Starting web server at port 3000")
 }
