@@ -16,7 +16,7 @@ type UserServiceImpl struct {
 	Validate       *validator.Validate
 }
 
-func NewUserServiceImpl(userRepository user_repository.UserRepository, db *sql.DB, validate *validator.Validate) UserService {
+func NewUserService(userRepository user_repository.UserRepository, db *sql.DB, validate *validator.Validate) UserService {
 	return &UserServiceImpl{
 		UserRepository: userRepository,
 		DB:             db,
