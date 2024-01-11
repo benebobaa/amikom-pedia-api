@@ -9,3 +9,13 @@ Content-Type: application/json
   "nim": "2024",
   "password": "12345678"
 }
+
+###
+POST http://localhost:3000/api/v1/otp
+Accept: application/json
+Content-Type: application/json
+
+{
+  "ref_code":"fumynlkbop14070",
+  "otp_value":"447416"
+}

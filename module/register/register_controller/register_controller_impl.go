@@ -13,11 +13,11 @@ type RegisterControllerImpl struct {
 	RegisterService register_service.RegisterService
 }
 
-func NewRegisterController(registerService register_service.RegisterService) *RegisterControllerImpl {
+func NewRegisterController(registerService register_service.RegisterService) RegisterController {
 	return &RegisterControllerImpl{RegisterService: registerService}
 }
 
-func (registerController RegisterControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (registerController *RegisterControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	registerCreateRequest := register.RegisterRequest{}
 
 	helper.ReadFromRequestBody(request, &registerCreateRequest)
