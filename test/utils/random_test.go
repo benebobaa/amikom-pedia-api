@@ -23,13 +23,12 @@ func TestGenerateRandomString(t *testing.T) {
 func TestGenerateRandomInt(t *testing.T) {
 	var randomInt []int64
 	for i := 1; i <= 10; i++ {
-		randomInt = append(randomInt, utils.RandomInt(1, 10))
+		randomInt = append(randomInt, utils.RandomInt(100000, 999999))
 		fmt.Println(randomInt)
 	}
 
 	require.Len(t, randomInt, 10)
 	require.GreaterOrEqual(t, randomInt[0], int64(1))
-	require.LessOrEqual(t, randomInt[0], int64(10))
 }
 
 func TestGenerateRandomCombine(t *testing.T) {

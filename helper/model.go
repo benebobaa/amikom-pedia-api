@@ -18,7 +18,7 @@ func ToUserResponse(userData domain.User) user.ResponseUser {
 	}
 }
 
-func ToCategoryResponses(users []domain.User) []user.ResponseUser {
+func ToUserResponses(users []domain.User) []user.ResponseUser {
 	var userResponses []user.ResponseUser
 	for _, category := range users {
 		userResponses = append(userResponses, ToUserResponse(category))

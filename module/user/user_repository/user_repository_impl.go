@@ -47,7 +47,28 @@ func (userRepo *UserRepositoryImpl) FindByUUID(ctx context.Context, tx *sql.Tx, 
 	}
 }
 
-func (userRepo *UserRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, user domain.User) []domain.User {
-	//TODO implement me
-	panic("implement me")
+func (userRepo *UserRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.User {
+	SQL := `SELECT uuid, email, nim, name, username, bio, password, created_at, updated_at FROM "user"`
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+
+	defer rows.Close()
+
+	var users []domain.User
+
+	for rows.Next() {
+		user := domain.User{}
+		err := rows.Scan(&user.UUID, &user.Email, &user.Nim, &user.Name, &user.Username, &user.Bio, &user.Password, &user.CreatedAt, &user.UpdatedAt)
+		helper.PanicIfError(err)
+
+		users = append(users, user)
+	}
+
+	return users
+}
+
+func (userRepo *UserRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, user domain.User) {
+	SQL := `DELETE FROM "user" WHERE uuid = $1`
+	_, err := tx.ExecContext(ctx, SQL, user.UUID)
+	helper.PanicIfError(err)
 }

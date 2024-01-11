@@ -78,6 +78,28 @@ func (userService *UserServiceImpl) FindByUUID(ctx context.Context, uuid string)
 }
 
 func (userService *UserServiceImpl) FindAll(ctx context.Context) []user.ResponseUser {
-	//TODO implement me
-	panic("implement me")
+	tx, err := userService.DB.Begin()
+
+	helper.PanicIfError(err)
+
+	users := userService.UserRepository.FindAll(ctx, tx)
+
+	return helper.ToUserResponses(users)
+}
+
+func (userService *UserServiceImpl) Delete(ctx context.Context, uuid string) {
+	err := userService.Validate.Var(uuid, "required")
+
+	helper.PanicIfError(err)
+	tx, err := userService.DB.Begin()
+	helper.PanicIfError(err)
+
+	defer helper.CommitOrRollback(tx)
+
+	userUUID, err := userService.UserRepository.FindByUUID(ctx, tx, domain.User{UUID: uuid})
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	userService.UserRepository.Delete(ctx, tx, domain.User{UUID: userUUID.UUID})
 }

@@ -8,6 +8,7 @@ import (
 type UserService interface {
 	Create(ctx context.Context, requestUser user.CreateRequestUser) user.ResponseUser
 	Update(ctx context.Context) user.ResponseUser
+	Delete(ctx context.Context, uuid string)
 	FindByUUID(ctx context.Context, uuid string) user.ResponseUser
 	FindAll(ctx context.Context) []user.ResponseUser
 }
