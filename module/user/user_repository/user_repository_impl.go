@@ -5,6 +5,7 @@ import (
 	"amikom-pedia-api/model/domain"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -27,16 +28,47 @@ func (userRepo *UserRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, user
 }
 
 func (userRepo *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, user domain.User) {
-	//TODO implement me
-	panic("implement me")
 }
 
 func (userRepo *UserRepositoryImpl) FindByUUID(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
-	//TODO implement me
-	panic("implement me")
+	SQL := `SELECT uuid, email, nim, name, username, bio, password, created_at, updated_at FROM "user" WHERE uuid = $1`
+
+	rows, err := tx.QueryContext(ctx, SQL, user.UUID)
+	fmt.Println("err:", err)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	userData := domain.User{}
+	if rows.Next() {
+		rows.Scan(&userData.UUID, &userData.Email, &userData.Nim, &userData.Name, &userData.Username, &userData.Bio, &userData.Password, &userData.CreatedAt, &userData.UpdatedAt)
+		return userData, nil
+	} else {
+		return userData, errors.New("user not found")
+	}
 }
 
-func (userRepo *UserRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, user domain.User) []domain.User {
-	//TODO implement me
-	panic("implement me")
+func (userRepo *UserRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.User {
+	SQL := `SELECT uuid, email, nim, name, username, bio, password, created_at, updated_at FROM "user"`
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+
+	defer rows.Close()
+
+	var users []domain.User
+
+	for rows.Next() {
+		user := domain.User{}
+		err := rows.Scan(&user.UUID, &user.Email, &user.Nim, &user.Name, &user.Username, &user.Bio, &user.Password, &user.CreatedAt, &user.UpdatedAt)
+		helper.PanicIfError(err)
+
+		users = append(users, user)
+	}
+
+	return users
+}
+
+func (userRepo *UserRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, user domain.User) {
+	SQL := `DELETE FROM "user" WHERE uuid = $1`
+	_, err := tx.ExecContext(ctx, SQL, user.UUID)
+	helper.PanicIfError(err)
 }

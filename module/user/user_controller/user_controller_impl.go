@@ -32,3 +32,43 @@ func (userController *UserControllerImpl) Create(writer http.ResponseWriter, req
 
 	helper.WriteToResponseBody(writer, baseResponse)
 }
+
+func (userController *UserControllerImpl) FindByUUID(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	uuid := params.ByName("uuid")
+
+	userResponse := userController.UserService.FindByUUID(request.Context(), uuid)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   userResponse,
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}
+
+func (userController *UserControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+
+	usersResponse := userController.UserService.FindAll(request.Context())
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   usersResponse,
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}
+
+func (userController *UserControllerImpl) Delete(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	uuid := params.ByName("uuid")
+
+	userController.UserService.Delete(request.Context(), uuid)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}
