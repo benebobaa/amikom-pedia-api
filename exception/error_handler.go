@@ -21,6 +21,10 @@ func ErrorHandler(writer http.ResponseWriter, request *http.Request, exception i
 		return
 	}
 
+	if unauthorizedError(writer, request, exception) {
+		return
+	}
+
 	internalServerError(writer, request, exception)
 }
 
@@ -72,6 +76,26 @@ func userIsExistError(writer http.ResponseWriter, request *http.Request, err int
 		webResponse := web.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "BAD REQUEST",
+			Data:   exception.Error,
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
+		return true
+	} else {
+		return false
+	}
+
+}
+
+func unauthorizedError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
+	exception, ok := err.(UnauthorizedError)
+	if ok {
+		writer.Header().Set("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusUnauthorized)
+
+		webResponse := web.WebResponse{
+			Code:   http.StatusUnauthorized,
+			Status: "UNAUTHORIZED",
 			Data:   exception.Error,
 		}
 

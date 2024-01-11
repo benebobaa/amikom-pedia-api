@@ -2,6 +2,7 @@ package helper
 
 import (
 	"amikom-pedia-api/model/domain"
+	"amikom-pedia-api/model/web/login"
 	"amikom-pedia-api/model/web/register"
 	"amikom-pedia-api/model/web/user"
 )
@@ -34,5 +35,12 @@ func ToRegisterResponse(registerData domain.Register) register.RegisterResponse 
 		Nim:       registerData.Nim,
 		Name:      registerData.Name,
 		CreatedAt: registerData.CreatedAt,
+	}
+}
+
+func ToLoginResponse(user domain.User, accessToken string) login.LoginResponse {
+	return login.LoginResponse{
+		AccessToken: accessToken,
+		User:        ToUserResponse(user),
 	}
 }
