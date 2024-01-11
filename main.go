@@ -3,6 +3,9 @@ package main
 import (
 	"amikom-pedia-api/app"
 	"amikom-pedia-api/helper"
+	"amikom-pedia-api/module/otp/otp_controller"
+	"amikom-pedia-api/module/otp/otp_repository"
+	"amikom-pedia-api/module/otp/otp_service"
 	"amikom-pedia-api/module/register/register_controller"
 	"amikom-pedia-api/module/register/register_repository"
 	"amikom-pedia-api/module/register/register_service"
@@ -27,11 +30,15 @@ func main() {
 	userService := user_service.NewUserService(userRepository, db, validate)
 	userController := user_controller.NewUserController(userService)
 
+	otpRepository := otp_repository.NewOtpRepository()
+	otpService := otp_service.NewOtpService(otpRepository, db, validate)
+	otpController := otp_controller.NewOtpController(otpService)
+
 	registerRepository := register_repository.NewRegisterRepository()
-	registerService := register_service.NewRegisterService(registerRepository, db, validate)
+	registerService := register_service.NewRegisterService(registerRepository, otpRepository, db, validate)
 	registerController := register_controller.NewRegisterController(registerService)
 
-	router := app.NewRouter(userController, registerController)
+	router := app.NewRouter(userController, registerController, otpController)
 
 	server := http.Server{
 		Addr:    "localhost:3000",

@@ -1,11 +1,12 @@
 package otp
 
-type ResponseOTP struct {
-	ID        int    `json:"id"`
-	User_rid  int    `json:"user_rid"`
-	UUID      string `json:"uuid"`
-	OTP_code  string `json:"otp_code"`
-	ExpiredAt string `json:"expired_at"`
-	CreatedAt string `json:"created_at"`
-	Ref_code  string `json:"ref_code"`
+import "time"
+
+type CreateResponseOTP struct {
+	ID        int       `json:"id"`
+	UserRid   int       `json:"user_rid"`
+	UUID      string    `json:"uuid"`
+	ExpiredAt time.Time `json:"expired_at"`
+	CreatedAt time.Time `json:"created_at"`
+	RefCode   string    `json:"ref_code"`
 }
