@@ -16,7 +16,8 @@ func NewRouter(userController user_controller.UserController, registerController
 	router.GET("/api/v1/users", userController.FindAll)
 	router.DELETE("/api/v1/users/:uuid", userController.Delete)
 	router.POST("/api/v1/register", registerController.Create)
-	router.POST("/api/v1/otp", otpController.Validation)
+	router.POST("/api/v1/otp/validate", otpController.Validation)
+	//router.POST("/api/v1/otp/send", otpController.SendOtp)
 
 	router.PanicHandler = exception.ErrorHandler
 

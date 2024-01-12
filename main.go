@@ -13,6 +13,7 @@ import (
 	"amikom-pedia-api/module/user/user_repository"
 	"amikom-pedia-api/module/user/user_service"
 	"amikom-pedia-api/utils"
+	"amikom-pedia-api/utils/mail"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
@@ -24,6 +25,7 @@ func main() {
 	config, err := utils.LoadConfig(".")
 	helper.PanicIfError(err)
 
+	gmailSender := mail.NewGmailSender(config.EmailName, config.EmailSender, config.EmailPassword)
 	db := app.NewDB(config.DBDriver, config.DBSource)
 	validate := validator.New()
 	userRepository := user_repository.NewUserRepository()
@@ -35,13 +37,13 @@ func main() {
 	registerService := register_service.NewRegisterService(registerRepository, otpRepository, db, validate)
 	registerController := register_controller.NewRegisterController(registerService)
 
-	otpService := otp_service.NewOtpService(otpRepository, registerRepository, db, validate)
+	otpService := otp_service.NewOtpService(otpRepository, registerRepository, gmailSender, db, validate)
 	otpController := otp_controller.NewOtpController(otpService)
 
 	router := app.NewRouter(userController, registerController, otpController)
 
 	server := http.Server{
-		Addr:    "localhost:3000",
+		Addr:    config.ServerAddress,
 		Handler: router,
 	}
 
