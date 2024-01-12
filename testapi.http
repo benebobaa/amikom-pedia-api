@@ -9,3 +9,30 @@ Content-Type: application/json
   "nim": "2024",
   "password": "12345678"
 }
+
+### Create a user
+POST http://localhost:3000/api/v1/users
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eYJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2NzE0MGUwLTAyMWItNGM4ZS1iNjc3LTI4MDQwMWFmMGQ4NSIsInVzZXJuYW1lIjoiYmVuZWJvYmEiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTEyVDE2OjQzOjIxLjY4MTc1MTIrMDc6MDAiLCJleHBpcmVkX2F0IjoiMjAyNC0wMS0xMlQxNjo1ODoyMS42ODE3NTEyKzA3OjAwIn0.hMoQ8DhOt2kk5nOnAdAPLuQ5s-JaBRsHJRJSd71LvOg
+
+{
+  "email": "benew@gmail.com",
+  "nim": "20.11.3789",
+  "name": "bene",
+  "username": "BENEBOBA12",
+  "bio": "cobadeng",
+  "password": "apaya"
+}
+
+
+### Login
+POST http://localhost:3000/api/v1/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username_or_email":"beneboba",
+  "password":"apaya"
+
+ }

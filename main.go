@@ -3,6 +3,7 @@ package main
 import (
 	"amikom-pedia-api/app"
 	"amikom-pedia-api/helper"
+	"amikom-pedia-api/middleware"
 	"amikom-pedia-api/module/login/login_controller"
 	"amikom-pedia-api/module/login/login_repository"
 	"amikom-pedia-api/module/login/login_service"
@@ -48,7 +49,7 @@ func main() {
 
 	server := http.Server{
 		Addr:    config.ServerAddress,
-		Handler: router,
+		Handler: middleware.NewAuthMiddleware(router, tokenMaker),
 	}
 
 	err = server.ListenAndServe()
