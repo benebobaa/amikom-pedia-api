@@ -1,14 +1,17 @@
 package utils
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
 type Config struct {
-	DBDriver      string `mapstructure:"DB_DRIVER"`
-	DBSource      string `mapstructure:"DB_SOURCE"`
-	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
-	EmailName     string `mapstructure:"EMAIL_NAME"`
-	EmailSender   string `mapstructure:"EMAIL_SENDER"`
-	EmailPassword string `mapstructure:"EMAIL_PASSWORD"`
+	DBDriver         string `mapstructure:"DB_DRIVER"`
+	DBSource         string `mapstructure:"DB_SOURCE"`
+	ServerAddress    string `mapstructure:"SERVER_ADDRESS"`
+	TokenSymetricKey string `mapstructure:"TOKEN_SYMETRIC_KEY"`
+	EmailName        string `mapstructure:"EMAIL_NAME"`
+	EmailSender      string `mapstructure:"EMAIL_SENDER"`
+	EmailPassword    string `mapstructure:"EMAIL_PASSWORD"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
