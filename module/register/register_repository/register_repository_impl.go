@@ -57,3 +57,21 @@ func (registerRepo *RegisterRepositoryImpl) FindByEmail(ctx context.Context, tx 
 
 	return register, nil
 }
+
+func (registerRepo *RegisterRepositoryImpl) FindByID(ctx context.Context, tx *sql.Tx, id int) (domain.Register, error) {
+	SQL := `SELECT email FROM "user_registration" WHERE id = $1`
+
+	row, err := tx.QueryContext(ctx, SQL, id)
+	helper.PanicIfError(err)
+	defer row.Close()
+
+	register := domain.Register{}
+	if row.Next() {
+		err := row.Scan(&register.Email)
+		helper.PanicIfError(err)
+
+	} else {
+		return register, errors.New("email not found")
+	}
+	return register, nil
+}

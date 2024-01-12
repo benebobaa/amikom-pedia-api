@@ -30,3 +30,18 @@ func (otpController *OtpControllerImpl) Validation(writer http.ResponseWriter, r
 
 	helper.WriteToResponseBody(writer, baseResponse)
 }
+
+func (otpController *OtpControllerImpl) SendOtp(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	createRequestOtp := otp.SendOtpRequest{}
+	helper.ReadFromRequestBody(request, &createRequestOtp)
+
+	err := otpController.OtpService.SendOtp(request.Context(), createRequestOtp)
+	helper.PanicIfError(err)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}

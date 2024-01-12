@@ -5,13 +5,13 @@ Content-Type: application/json
 
 {
   "name": "Hanif Al Irsyad",
-  "email": "coba@amikompedia.com",
+  "email": "bensatriya3@gmail.com",
   "nim": "2024",
   "password": "12345678"
 }
 
-###
-POST http://localhost:3000/api/v1/otp
+### VALIDATE OTP
+POST http://localhost:3000/api/v1/otp/validate
 Accept: application/json
 Content-Type: application/json
 
@@ -19,3 +19,27 @@ Content-Type: application/json
   "ref_code":"hqtghkmgxz78424",
   "otp_value":"223426"
 }
+
+### SEND OTP EMAIL
+POST http://localhost:3000/api/v1/otp/send
+Accept: application/json
+Content-Type: application/json
+
+{
+  "ref_code":"lkfoqjipld97803"
+}
+
+### CREATE USER
+POST http://localhost:3000/api/v1/users
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "bene@gmail.com",
+  "nim": "20.11.3785",
+  "name": "bene",
+  "username": "beneboba",
+  "bio": "cobadeng",
+  "password": "apaya"
+}
+

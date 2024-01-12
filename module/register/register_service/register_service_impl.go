@@ -8,6 +8,7 @@ import (
 	"amikom-pedia-api/module/otp/otp_repository"
 	"amikom-pedia-api/module/register/register_repository"
 	"amikom-pedia-api/utils"
+	"amikom-pedia-api/utils/mail"
 	"context"
 	"database/sql"
 	"github.com/go-playground/validator/v10"
@@ -18,6 +19,7 @@ import (
 type RegisterServiceImpl struct {
 	RegisterRepository register_repository.RegisterRepository
 	OtpRepository      otp_repository.OtpRepository
+	GmailSender        mail.GmailSender
 	DB                 *sql.DB
 	Validate           *validator.Validate
 }
@@ -46,6 +48,7 @@ func (registerService *RegisterServiceImpl) Create(ctx context.Context, requestR
 	}
 
 	_, err = registerService.RegisterRepository.FindByEmail(ctx, tx, requestRegister.Email)
+
 	if err != nil {
 		panic(exception.NewEmailAlreadyVerified(err.Error()))
 	}

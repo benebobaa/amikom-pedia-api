@@ -13,7 +13,7 @@ CREATE TABLE "user_registration" (
 -- OTP Table
 CREATE TABLE "otp" (
                        id SERIAL PRIMARY KEY,
-                       user_rid SERIAL REFERENCES "user_registration"(id),
+                       user_rid INT REFERENCES "user_registration"(id),
                        user_id UUID REFERENCES "user"(uuid),
                        otp_value VARCHAR(6) NOT NULL,
                        expired_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
