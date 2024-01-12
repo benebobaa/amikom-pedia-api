@@ -30,13 +30,13 @@ func main() {
 	userService := user_service.NewUserService(userRepository, db, validate)
 	userController := user_controller.NewUserController(userService)
 
-	otpRepository := otp_repository.NewOtpRepository()
-	otpService := otp_service.NewOtpService(otpRepository, db, validate)
-	otpController := otp_controller.NewOtpController(otpService)
-
 	registerRepository := register_repository.NewRegisterRepository()
+	otpRepository := otp_repository.NewOtpRepository()
 	registerService := register_service.NewRegisterService(registerRepository, otpRepository, db, validate)
 	registerController := register_controller.NewRegisterController(registerService)
+
+	otpService := otp_service.NewOtpService(otpRepository, registerRepository, db, validate)
+	otpController := otp_controller.NewOtpController(otpService)
 
 	router := app.NewRouter(userController, registerController, otpController)
 

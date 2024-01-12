@@ -7,3 +7,7 @@ type OtpError struct {
 func NewOtpError(error string) OtpError {
 	return OtpError{Error: error}
 }
+
+func NewEmailAlreadyVerified(error string) OtpError {
+	return OtpError{Error: error}
+}

@@ -1,6 +1,7 @@
 package register_service
 
 import (
+	"amikom-pedia-api/exception"
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/register"
@@ -42,6 +43,11 @@ func (registerService *RegisterServiceImpl) Create(ctx context.Context, requestR
 		Nim:      requestRegister.Nim,
 		Name:     requestRegister.Name,
 		Password: hashedPassword,
+	}
+
+	_, err = registerService.RegisterRepository.FindByEmail(ctx, tx, requestRegister.Email)
+	if err != nil {
+		panic(exception.NewEmailAlreadyVerified(err.Error()))
 	}
 
 	result := registerService.RegisterRepository.Create(ctx, tx, requestRegisterDomain)

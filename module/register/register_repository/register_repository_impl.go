@@ -5,6 +5,8 @@ import (
 	"amikom-pedia-api/model/domain"
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 )
 
 type RegisterRepositoryImpl struct{}
@@ -20,4 +22,38 @@ func (registerRepo *RegisterRepositoryImpl) Create(ctx context.Context, tx *sql.
 	helper.PanicIfError(err)
 
 	return register
+}
+
+func (registerRepo *RegisterRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, register domain.Register) domain.Register {
+	SQL := `UPDATE "user_registration"
+			SET is_verified = $1, email_verified_at = $2
+			WHERE id = $3`
+
+	_, err := tx.ExecContext(ctx, SQL, register.IsVerified, register.EmailVerifiedAt, register.ID)
+
+	helper.PanicIfError(err)
+
+	return register
+}
+
+func (registerRepo *RegisterRepositoryImpl) FindByEmail(ctx context.Context, tx *sql.Tx, email string) (domain.Register, error) {
+	SQL := `SELECT is_verified, email_verified_at FROM "user_registration" WHERE email = $1`
+
+	row, err := tx.QueryContext(ctx, SQL, email)
+	helper.PanicIfError(err)
+	defer row.Close()
+
+	register := domain.Register{}
+	if row.Next() {
+		err := row.Scan(&register.IsVerified, &register.EmailVerifiedAt)
+		if register.IsVerified {
+			fmt.Printf("Email %s already verified\n", email)
+			return register, errors.New("email already verified")
+		}
+		helper.PanicIfError(err)
+	} else {
+		return register, nil
+	}
+
+	return register, nil
 }
