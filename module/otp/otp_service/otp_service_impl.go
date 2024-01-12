@@ -6,6 +6,7 @@ import (
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/otp"
 	"amikom-pedia-api/module/otp/otp_repository"
+	"amikom-pedia-api/module/register/register_repository"
 	"context"
 	"database/sql"
 	"fmt"
@@ -14,13 +15,14 @@ import (
 )
 
 type OtpServiceImpl struct {
-	OtpRepository otp_repository.OtpRepository
-	DB            *sql.DB
-	Validate      *validator.Validate
+	OtpRepository      otp_repository.OtpRepository
+	RegisterRepository register_repository.RegisterRepository
+	DB                 *sql.DB
+	Validate           *validator.Validate
 }
 
-func NewOtpService(otpRepository otp_repository.OtpRepository, DB *sql.DB, validate *validator.Validate) OtpService {
-	return &OtpServiceImpl{OtpRepository: otpRepository, DB: DB, Validate: validate}
+func NewOtpService(otpRepository otp_repository.OtpRepository, registerRepository register_repository.RegisterRepository, DB *sql.DB, validate *validator.Validate) OtpService {
+	return &OtpServiceImpl{OtpRepository: otpRepository, RegisterRepository: registerRepository, DB: DB, Validate: validate}
 }
 
 func (otpServices *OtpServiceImpl) Create(ctx context.Context, request otp.CreateRequestOtp) otp.CreateResponseOTP {
@@ -67,4 +69,12 @@ func (otpServices *OtpServiceImpl) Validation(ctx context.Context, request otp.O
 		fmt.Println("otp wrong")
 		panic(exception.NewOtpError("Invalid OTP. Please enter a valid one."))
 	}
+
+	paramsUpdate := domain.Register{
+		IsVerified:      true,
+		EmailVerifiedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		ID:              int(result.UserRid.Int32),
+	}
+
+	otpServices.RegisterRepository.Update(ctx, tx, paramsUpdate)
 }

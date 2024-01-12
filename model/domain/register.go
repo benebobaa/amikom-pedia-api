@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Register struct {
 	ID              int
@@ -10,6 +13,6 @@ type Register struct {
 	Password        string
 	RefCode         string
 	IsVerified      bool
-	EmailVerifiedAt time.Time
+	EmailVerifiedAt sql.NullTime
 	CreatedAt       time.Time
 }
