@@ -3,6 +3,7 @@ package helper
 import (
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/login"
+	"amikom-pedia-api/model/web/otp"
 	"amikom-pedia-api/model/web/register"
 	"amikom-pedia-api/model/web/user"
 )
@@ -28,13 +29,20 @@ func ToUserResponses(users []domain.User) []user.ResponseUser {
 	return userResponses
 }
 
-func ToRegisterResponse(registerData domain.Register) register.RegisterResponse {
+func ToRegisterResponse(registerData domain.Register, otpData domain.Otp) register.RegisterResponse {
 	return register.RegisterResponse{
 		ID:        registerData.ID,
 		Email:     registerData.Email,
 		Nim:       registerData.Nim,
 		Name:      registerData.Name,
 		CreatedAt: registerData.CreatedAt,
+		RefCode:   otpData.RefCode,
+	}
+}
+
+func ToOtpResponse(otpData domain.Otp) otp.CreateResponseOTP {
+	return otp.CreateResponseOTP{
+		RefCode: otpData.RefCode,
 	}
 }
 

@@ -9,6 +9,9 @@ type Config struct {
 	DBSource         string `mapstructure:"DB_SOURCE"`
 	ServerAddress    string `mapstructure:"SERVER_ADDRESS"`
 	TokenSymetricKey string `mapstructure:"TOKEN_SYMETRIC_KEY"`
+	EmailName        string `mapstructure:"EMAIL_NAME"`
+	EmailSender      string `mapstructure:"EMAIL_SENDER"`
+	EmailPassword    string `mapstructure:"EMAIL_PASSWORD"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
