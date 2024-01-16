@@ -10,14 +10,15 @@ jobs:
     name: Build image
     runs-on: ubuntu-latest
 
-
-
     steps:
       - name: Check read env secrets
         run: |
           echo ${{ secrets.AWS_ACCESS_KEY_ID }}
           echo ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        
+
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Check out code
         uses: actions/checkout@v2
