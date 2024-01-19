@@ -42,7 +42,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
           ECR_REPOSITORY: amikompedia
         run: |
             # Build a docker container and
@@ -50,7 +50,7 @@ jobs:
             # be deployed to ECS.
             docker build -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
-            echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+            echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
