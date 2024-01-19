@@ -5,25 +5,25 @@ import (
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/user"
+	"amikom-pedia-api/module/otp/otp_repository"
 	"amikom-pedia-api/module/user/user_repository"
 	"amikom-pedia-api/utils"
 	"context"
 	"database/sql"
 	"github.com/go-playground/validator/v10"
+	"strconv"
+	"time"
 )
 
 type UserServiceImpl struct {
 	UserRepository user_repository.UserRepository
+	OtpRepository  otp_repository.OtpRepository
 	DB             *sql.DB
 	Validate       *validator.Validate
 }
 
-func NewUserService(userRepository user_repository.UserRepository, db *sql.DB, validate *validator.Validate) UserService {
-	return &UserServiceImpl{
-		UserRepository: userRepository,
-		DB:             db,
-		Validate:       validate,
-	}
+func NewUserService(userRepository user_repository.UserRepository, otpRepository otp_repository.OtpRepository, DB *sql.DB, validate *validator.Validate) UserService {
+	return &UserServiceImpl{UserRepository: userRepository, OtpRepository: otpRepository, DB: DB, Validate: validate}
 }
 
 func (userService *UserServiceImpl) Create(ctx context.Context, requestUser user.CreateRequestUser) user.ResponseUser {
@@ -102,4 +102,58 @@ func (userService *UserServiceImpl) Delete(ctx context.Context, uuid string) {
 	}
 
 	userService.UserRepository.Delete(ctx, tx, domain.User{UUID: userUUID.UUID})
+}
+
+func (userService *UserServiceImpl) ForgotPassword(ctx context.Context, email string) user.ForgotPasswordResponse {
+	err := userService.Validate.Var(email, "required,email")
+	helper.PanicIfError(err)
+
+	tx, err := userService.DB.Begin()
+	helper.PanicIfError(err)
+
+	defer helper.CommitOrRollback(tx)
+
+	userEmail := domain.User{Email: email}
+
+	result, err := userService.UserRepository.FindByEmail(ctx, tx, userEmail)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	resultNullString := sql.NullString{String: result.UUID, Valid: true}
+
+	otpData := domain.Otp{
+		RefCode:   utils.RandomCombineIntAndString(),
+		OtpValue:  strconv.FormatInt(utils.RandomInt(100000, 999999), 10),
+		ExpiredAt: time.Now().Add(time.Minute * 5),
+		UUID:      resultNullString,
+	}
+
+	resultOTP := userService.OtpRepository.Create(ctx, tx, otpData)
+
+	return helper.ToSetNewPasswordResponse(resultOTP)
+
+}
+
+func (userService *UserServiceImpl) SetNewPassword(ctx context.Context, requestSetNewPassword user.SetNewPasswordRequest) {
+	err := userService.Validate.Struct(requestSetNewPassword)
+	helper.PanicIfError(err)
+
+	tx, err := userService.DB.Begin()
+	helper.PanicIfError(err)
+
+	defer helper.CommitOrRollback(tx)
+
+	hashedPassword, err := utils.HashPassword(requestSetNewPassword.Password)
+	helper.PanicIfError(err)
+
+	result, err := userService.OtpRepository.FindByRefCode(ctx, tx, requestSetNewPassword.RefCode)
+	helper.PanicIfError(err)
+
+	requestSetNewPasswordDomain := domain.User{
+		UUID:     result.UUID.String,
+		Password: hashedPassword,
+	}
+
+	userService.UserRepository.SetNewPassword(ctx, tx, requestSetNewPasswordDomain)
 }

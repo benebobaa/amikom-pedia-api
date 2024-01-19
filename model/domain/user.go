@@ -12,4 +12,5 @@ type User struct {
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	RefCode   string
 }
