@@ -60,7 +60,7 @@ func (registerService *RegisterServiceImpl) Create(ctx context.Context, requestR
 	otpData := domain.Otp{
 		RefCode:   utils.RandomCombineIntAndString(),
 		OtpValue:  strconv.FormatInt(utils.RandomInt(100000, 999999), 10),
-		ExpiredAt: time.Now().Add(time.Minute * 1),
+		ExpiredAt: time.Now().Add(time.Minute * 5),
 		UserRid:   resultNulId,
 	}
 

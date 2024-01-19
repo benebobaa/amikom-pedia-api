@@ -12,4 +12,6 @@ type UserRepository interface {
 	Delete(ctx context.Context, tx *sql.Tx, user domain.User)
 	FindByUUID(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error)
 	FindAll(ctx context.Context, tx *sql.Tx) []domain.User
+	FindByEmail(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error)
+	SetNewPassword(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
 }

@@ -5,22 +5,22 @@ Content-Type: application/json
 
 {
   "name": "Hanif Al Irsyad",
-  "email": "bensatriya3@gmail.com",
-  "nim": "2024",
-  "password": "12345678"
+  "email": "hanifalirsyad.123@gmail.com",
+  "nim": "20.11.3740",
+  "password": "apaya"
 }
 
 ### Create a user
 POST http://localhost:3000/api/v1/users
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer eYJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2NzE0MGUwLTAyMWItNGM4ZS1iNjc3LTI4MDQwMWFmMGQ4NSIsInVzZXJuYW1lIjoiYmVuZWJvYmEiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTEyVDE2OjQzOjIxLjY4MTc1MTIrMDc6MDAiLCJleHBpcmVkX2F0IjoiMjAyNC0wMS0xMlQxNjo1ODoyMS42ODE3NTEyKzA3OjAwIn0.hMoQ8DhOt2kk5nOnAdAPLuQ5s-JaBRsHJRJSd71LvOg
+#Authorization: Bearer eYJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2NzE0MGUwLTAyMWItNGM4ZS1iNjc3LTI4MDQwMWFmMGQ4NSIsInVzZXJuYW1lIjoiYmVuZWJvYmEiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTEyVDE2OjQzOjIxLjY4MTc1MTIrMDc6MDAiLCJleHBpcmVkX2F0IjoiMjAyNC0wMS0xMlQxNjo1ODoyMS42ODE3NTEyKzA3OjAwIn0.hMoQ8DhOt2kk5nOnAdAPLuQ5s-JaBRsHJRJSd71LvOg
 
 {
-  "email": "benew@gmail.com",
-  "nim": "20.11.3785",
-  "name": "bene",
-  "username": "BENEBOBA12",
+  "email": "hanifalirsyad.123@gmail.com",
+  "nim": "20.11.3740",
+  "name": "Hanif",
+  "username": "whois",
   "bio": "cobadeng",
   "password": "apaya"
 }
@@ -30,19 +30,21 @@ Authorization: Bearer eYJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2NzE0MGUwL
 POST http://localhost:3000/api/v1/otp/validate
 Accept: application/json
 Content-Type: application/json
+#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzNTRiMWFkLTRlOWMtNDU5ZC1hZWYxLWI3MjUyMmRkMzc2YiIsInVzZXJuYW1lIjoid2hvaXMiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjI3OjEwLjM4MjkyNzYyMiswNzowMCIsImV4cGlyZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjQyOjEwLjM4MjkyNzg5NiswNzowMCJ9.CTWQmbzPrgnPFBV1qaPwKLgcYyfMrTRl-n-9TiehsgI
 
 {
-  "ref_code":"hqtghkmgxz78424",
-  "otp_value":"223426"
+  "ref_code":"ppqdozvtbp49045",
+  "otp_value":"910076"
 }
 
 ### SEND OTP EMAIL
 POST http://localhost:3000/api/v1/otp/send
 Accept: application/json
 Content-Type: application/json
+#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFhMTZlNzVjLTA5NzEtNDI2MC1iODcwLTdmZTJlMjNmMGVjNiIsInVzZXJuYW1lIjoiQkVORUJPQkExMiIsImlzc3VlZF9hdCI6IjIwMjQtMDEtMTVUMTg6MDM6MTguNDUxMjUwMjg5KzA3OjAwIiwiZXhwaXJlZF9hdCI6IjIwMjQtMDEtMTVUMTg6MTg6MTguNDUxMjUwNDQ5KzA3OjAwIn0.mkO7yvH6os749DdZBVvaTobd9qWNk3WStKjbx7Mk2Sc
 
 {
-  "ref_code":"lkfoqjipld97803"
+  "ref_code":"ppqdozvtbp49045"
 }
 
 ### CREATE USER
@@ -51,10 +53,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "email": "bene@gmail.com",
-  "nim": "20.11.3785",
-  "name": "bene",
-  "username": "beneboba",
+  "email": "hanifalirsyad.123@gmail.com",
+  "nim": "20.11.3740",
+  "name": "Hanif Al Irsyad",
+  "username": "hanifanta",
   "bio": "cobadeng",
   "password": "apaya"
 }
@@ -66,7 +68,26 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "username_or_email":"beneboba",
-  "password":"apaya"
+  "username_or_email":"hanifanta",
+  "password":"asdjiwqojdfiqwojroqw"
 
  }
+
+### Forgot Password
+POST http://localhost:3000/api/v1/forgot-password
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email":"hanifalirsyad.123@gmail.com"
+}
+
+### Set New Password
+PUT http://localhost:3000/api/v1/set-new-password
+Accept: application/json
+Content-Type: application/json
+
+{
+  "ref_code" : "mrvmjtbgep68787",
+  "password" : "asdjiwqojdfiqwojroqw"
+}

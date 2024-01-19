@@ -72,3 +72,34 @@ func (userController *UserControllerImpl) Delete(writer http.ResponseWriter, req
 
 	helper.WriteToResponseBody(writer, baseResponse)
 }
+
+func (userController *UserControllerImpl) ForgotPassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	userForgotPassword := user.ForgotPasswordRequest{}
+
+	helper.ReadFromRequestBody(request, &userForgotPassword)
+
+	result := userController.UserService.ForgotPassword(request.Context(), userForgotPassword.Email)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   result,
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}
+
+func (userController *UserControllerImpl) SetNewPassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	userSetNewPassword := user.SetNewPasswordRequest{}
+
+	helper.ReadFromRequestBody(request, &userSetNewPassword)
+
+	userController.UserService.SetNewPassword(request.Context(), userSetNewPassword)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}

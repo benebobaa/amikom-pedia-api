@@ -16,9 +16,12 @@ func NewRouter(userController user_controller.UserController, registerController
 	router.GET("/api/v1/users/:uuid", userController.FindByUUID)
 	router.GET("/api/v1/users", userController.FindAll)
 	router.DELETE("/api/v1/users/:uuid", userController.Delete)
+	router.POST("/api/v1/forgot-password", userController.ForgotPassword)
+	router.PUT("/api/v1/set-new-password", userController.SetNewPassword)
 	router.POST("/api/v1/register", registerController.Create)
 	router.POST("/api/v1/otp/validate", otpController.Validation)
-	//router.POST("/api/v1/otp/send", otpController.SendOtp)
+
+	router.POST("/api/v1/otp/send", otpController.SendOtp)
 
 	//LOGIN
 	router.POST("/api/v1/login", loginController.Login)

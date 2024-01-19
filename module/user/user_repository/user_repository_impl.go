@@ -72,3 +72,25 @@ func (userRepo *UserRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, user
 	_, err := tx.ExecContext(ctx, SQL, user.UUID)
 	helper.PanicIfError(err)
 }
+
+func (userRepo *UserRepositoryImpl) FindByEmail(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
+	SQL := `SELECT uuid, email, nim, name, username, bio, password, created_at, updated_at FROM "user" WHERE email = $1`
+
+	row := tx.QueryRowContext(ctx, SQL, user.Email)
+	err := row.Scan(&user.UUID, &user.Email, &user.Nim, &user.Name, &user.Username, &user.Bio, &user.Password, &user.CreatedAt, &user.UpdatedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return user, errors.New("user not found")
+	} else {
+		helper.PanicIfError(err)
+	}
+
+	return user, nil
+}
+
+func (userRepo *UserRepositoryImpl) SetNewPassword(ctx context.Context, tx *sql.Tx, user domain.User) domain.User {
+	SQL := `UPDATE "user" SET password = $1 WHERE uuid = $2`
+	_, err := tx.ExecContext(ctx, SQL, user.Password, user.UUID)
+	helper.PanicIfError(err)
+
+	return user
+}
