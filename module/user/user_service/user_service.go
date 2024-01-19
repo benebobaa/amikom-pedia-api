@@ -11,4 +11,6 @@ type UserService interface {
 	Delete(ctx context.Context, uuid string)
 	FindByUUID(ctx context.Context, uuid string) user.ResponseUser
 	FindAll(ctx context.Context) []user.ResponseUser
+	ForgotPassword(ctx context.Context, email string) user.ForgotPasswordResponse
+	SetNewPassword(ctx context.Context, requestSetNewPassword user.SetNewPasswordRequest)
 }

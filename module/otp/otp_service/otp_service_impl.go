@@ -26,8 +26,8 @@ type OtpServiceImpl struct {
 	Validate           *validator.Validate
 }
 
-func NewOtpService(otpRepository otp_repository.OtpRepository, registerRepository register_repository.RegisterRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate) OtpService {
-	return &OtpServiceImpl{OtpRepository: otpRepository, RegisterRepository: registerRepository, GmailSender: gmailSender, DB: DB, Validate: validate}
+func NewOtpService(otpRepository otp_repository.OtpRepository, registerRepository register_repository.RegisterRepository, userRepository user_repository.UserRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate) OtpService {
+	return &OtpServiceImpl{OtpRepository: otpRepository, RegisterRepository: registerRepository, UserRepository: userRepository, GmailSender: gmailSender, DB: DB, Validate: validate}
 }
 
 func (otpService *OtpServiceImpl) Create(ctx context.Context, request otp.CreateRequestOtp) otp.CreateResponseOTP {
@@ -75,13 +75,17 @@ func (otpService *OtpServiceImpl) Validation(ctx context.Context, request otp.Ot
 		panic(exception.NewOtpError("Invalid OTP. Please enter a valid one."))
 	}
 
-	paramsUpdate := domain.Register{
-		IsVerified:      true,
-		EmailVerifiedAt: sql.NullTime{Time: time.Now(), Valid: true},
-		ID:              int(result.UserRid.Int32),
+	if result.UserRid.Valid {
+		paramsUpdate := domain.Register{
+			IsVerified:      true,
+			EmailVerifiedAt: sql.NullTime{Time: time.Now(), Valid: true},
+			ID:              int(result.UserRid.Int32),
+		}
+		otpService.RegisterRepository.Update(ctx, tx, paramsUpdate)
 	}
-
-	otpService.RegisterRepository.Update(ctx, tx, paramsUpdate)
+	if result.UUID.Valid {
+		return
+	}
 }
 
 func (otpService *OtpServiceImpl) SendOtp(ctx context.Context, request otp.SendOtpRequest) error {

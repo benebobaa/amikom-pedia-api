@@ -52,3 +52,9 @@ func ToLoginResponse(user domain.User, accessToken string) login.LoginResponse {
 		User:        ToUserResponse(user),
 	}
 }
+
+func ToSetNewPasswordResponse(otpData domain.Otp) user.ForgotPasswordResponse {
+	return user.ForgotPasswordResponse{
+		RefCode: otpData.RefCode,
+	}
+}
