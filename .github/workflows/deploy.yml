@@ -31,7 +31,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Load secrets and save to app.env
-        run: aws secretsmanager get-secret-value --secret-id amikompedia --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
+        run: aws secretsmanager get-secret-value --secret-id amikompedia --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]'  > app.env
         
       - name: Login to Docker Hub
         uses: docker/login-action@v2
