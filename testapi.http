@@ -27,7 +27,7 @@ Content-Type: application/json
 
 
 ### VALIDATE OTP
-POST http://localhost:3000/api/v1/otp/validate
+POST http://localhost:8080/api/v1/otp/validate
 Accept: application/json
 Content-Type: application/json
 #Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzNTRiMWFkLTRlOWMtNDU5ZC1hZWYxLWI3MjUyMmRkMzc2YiIsInVzZXJuYW1lIjoid2hvaXMiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjI3OjEwLjM4MjkyNzYyMiswNzowMCIsImV4cGlyZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjQyOjEwLjM4MjkyNzg5NiswNzowMCJ9.CTWQmbzPrgnPFBV1qaPwKLgcYyfMrTRl-n-9TiehsgI
