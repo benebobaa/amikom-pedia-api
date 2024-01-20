@@ -1,6 +1,6 @@
 module amikom-pedia-api
 
-go 1.21.5
+go 1.21
 
 require (
 	github.com/go-playground/validator/v10 v10.16.0
