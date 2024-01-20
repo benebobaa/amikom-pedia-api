@@ -13,17 +13,15 @@ func NewRouter(userController user_controller.UserController, registerController
 	router := httprouter.New()
 
 	router.POST("/api/v1/users", userController.Create)
-	router.GET("/api/v1/users/:uuid", userController.FindByUUID)
 	router.GET("/api/v1/users", userController.FindAll)
+	router.PUT("/api/v1/users/set-new-password", userController.SetNewPassword)
+	router.PUT("/api/v1/users/change-password", userController.UpdatePassword)
+	router.GET("/api/v1/users/:uuid", userController.FindByUUID)
 	router.DELETE("/api/v1/users/:uuid", userController.Delete)
-	router.POST("/api/v1/forgot-password", userController.ForgotPassword)
-	router.PUT("/api/v1/set-new-password", userController.SetNewPassword)
+	router.POST("/api/v1/users/forgot-password", userController.ForgotPassword)
 	router.POST("/api/v1/register", registerController.Create)
 	router.POST("/api/v1/otp/validate", otpController.Validation)
-
 	router.POST("/api/v1/otp/send", otpController.SendOtp)
-
-	//LOGIN
 	router.POST("/api/v1/login", loginController.Login)
 
 	router.PanicHandler = exception.ErrorHandler

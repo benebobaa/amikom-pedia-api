@@ -94,3 +94,11 @@ func (userRepo *UserRepositoryImpl) SetNewPassword(ctx context.Context, tx *sql.
 
 	return user
 }
+
+func (userRepo *UserRepositoryImpl) UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, newPassword string) error {
+	SQL := `UPDATE "user" SET password = $1 WHERE uuid = $2`
+	_, err := tx.ExecContext(ctx, SQL, newPassword, user.UUID)
+	helper.PanicIfError(err)
+
+	return nil
+}

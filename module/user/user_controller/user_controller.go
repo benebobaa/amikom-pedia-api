@@ -12,4 +12,5 @@ type UserController interface {
 	FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	ForgotPassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	SetNewPassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
+	UpdatePassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 }

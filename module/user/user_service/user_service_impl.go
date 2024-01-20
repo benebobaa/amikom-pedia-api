@@ -157,3 +157,21 @@ func (userService *UserServiceImpl) SetNewPassword(ctx context.Context, requestS
 
 	userService.UserRepository.SetNewPassword(ctx, tx, requestSetNewPasswordDomain)
 }
+
+func (userService *UserServiceImpl) UpdatePassword(ctx context.Context, userUUID string, newPasswordRequest user.UpdatePasswordRequest) error {
+	tx, err := userService.DB.Begin()
+	helper.PanicIfError(err)
+
+	hashedPassword, err := utils.HashPassword(newPasswordRequest.NewPassword)
+	helper.PanicIfError(err)
+
+	userDomain := domain.User{
+		UUID: userUUID,
+	}
+	err = userService.UserRepository.UpdatePassword(ctx, tx, userDomain, hashedPassword)
+	helper.PanicIfError(err)
+
+	helper.CommitOrRollback(tx)
+
+	return nil
+}

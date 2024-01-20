@@ -103,3 +103,23 @@ func (userController *UserControllerImpl) SetNewPassword(writer http.ResponseWri
 
 	helper.WriteToResponseBody(writer, baseResponse)
 }
+
+func (userController *UserControllerImpl) UpdatePassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	newPasswordRequest := user.UpdatePasswordRequest{}
+	helper.ReadFromRequestBody(request, &newPasswordRequest)
+
+	userUUID := newPasswordRequest.UUID
+
+	err := userController.UserService.UpdatePassword(request.Context(), userUUID, newPasswordRequest)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}

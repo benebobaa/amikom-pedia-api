@@ -28,7 +28,7 @@ func (middleware *AuthMiddleware) ServeHTTP(writer http.ResponseWriter, request 
 	authorizationHeader := request.Header.Get(authorizationHeaderKey)
 	fields := strings.Fields(authorizationHeader)
 
-	if request.URL.Path == "/api/v1/login" || request.URL.Path == "/api/v1/register" || request.URL.Path == "/api/v1/users" || request.URL.Path == "/api/v1/forgot-password" || request.URL.Path == "/api/v1/set-new-password" || request.URL.Path == "/api/v1/otp/validate" || request.URL.Path == "/api/v1/otp/send" {
+	if request.URL.Path == "/api/v1/login" || request.URL.Path == "/api/v1/register" || request.URL.Path == "/api/v1/users" || request.URL.Path == "/api/v1/forgot-password" || request.URL.Path == "/api/v1/set-new-password" || request.URL.Path == "/api/v1/otp/validate" || request.URL.Path == "/api/v1/otp/send" || request.URL.Path == "/api/v1/users/change-password" {
 
 		middleware.Handler.ServeHTTP(writer, request)
 

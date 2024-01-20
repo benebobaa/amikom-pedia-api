@@ -13,4 +13,5 @@ type UserService interface {
 	FindAll(ctx context.Context) []user.ResponseUser
 	ForgotPassword(ctx context.Context, email string) user.ForgotPasswordResponse
 	SetNewPassword(ctx context.Context, requestSetNewPassword user.SetNewPasswordRequest)
+	UpdatePassword(ctx context.Context, userUUID string, newPasswordRequest user.UpdatePasswordRequest) error
 }
