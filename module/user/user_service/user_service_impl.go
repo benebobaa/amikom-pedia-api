@@ -10,6 +10,7 @@ import (
 	"amikom-pedia-api/utils"
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/go-playground/validator/v10"
 	"strconv"
 	"time"
@@ -51,9 +52,27 @@ func (userService *UserServiceImpl) Create(ctx context.Context, requestUser user
 	return helper.ToUserResponse(result)
 }
 
-func (userService *UserServiceImpl) Update(ctx context.Context) user.ResponseUser {
-	//TODO implement me
-	panic("implement me")
+func (userService *UserServiceImpl) Update(ctx context.Context, uuid string, requestUser user.UpdateRequestUser) user.ResponseUser {
+	err := userService.Validate.Struct(requestUser)
+	helper.PanicIfError(err)
+
+	tx, err := userService.DB.Begin()
+	helper.PanicIfError(err)
+
+	defer helper.CommitOrRollback(tx)
+
+	user, err := userService.UserRepository.FindByUUID(ctx, tx, domain.User{UUID: uuid})
+	helper.PanicIfError(err)
+
+	requestUserDomain := domain.User{
+		UUID:     user.UUID,
+		Name:     requestUser.Name,
+		Username: requestUser.Username,
+		Bio:      requestUser.Bio,
+	}
+
+	result := userService.UserRepository.Update(ctx, tx, requestUserDomain)
+	return helper.ToUserResponse(result)
 }
 
 func (userService *UserServiceImpl) FindByUUID(ctx context.Context, uuid string) user.ResponseUser {
@@ -158,20 +177,30 @@ func (userService *UserServiceImpl) SetNewPassword(ctx context.Context, requestS
 	userService.UserRepository.SetNewPassword(ctx, tx, requestSetNewPasswordDomain)
 }
 
-func (userService *UserServiceImpl) UpdatePassword(ctx context.Context, userUUID string, newPasswordRequest user.UpdatePasswordRequest) error {
+func (userService *UserServiceImpl) UpdatePassword(ctx context.Context, uuid string, newPasswordRequest user.UpdatePasswordRequest) error {
+	err := userService.Validate.Struct(newPasswordRequest)
+	helper.PanicIfError(err)
+
 	tx, err := userService.DB.Begin()
 	helper.PanicIfError(err)
+
+	defer helper.CommitOrRollback(tx)
+
+	user, err := userService.UserRepository.FindByUUID(ctx, tx, domain.User{UUID: uuid})
+	helper.PanicIfError(err)
+
+	if !utils.CheckPasswordHash(newPasswordRequest.CurrentPassword, user.Password) {
+		return errors.New("current password does not match")
+	}
 
 	hashedPassword, err := utils.HashPassword(newPasswordRequest.NewPassword)
 	helper.PanicIfError(err)
 
-	userDomain := domain.User{
-		UUID: userUUID,
+	user.Password = hashedPassword
+	err = userService.UserRepository.UpdatePassword(ctx, tx, user, newPasswordRequest.CurrentPassword, newPasswordRequest.NewPassword)
+	if err != nil {
+		return err
 	}
-	err = userService.UserRepository.UpdatePassword(ctx, tx, userDomain, hashedPassword)
-	helper.PanicIfError(err)
-
-	helper.CommitOrRollback(tx)
 
 	return nil
 }

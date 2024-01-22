@@ -3,6 +3,7 @@ package user_repository
 import (
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/domain"
+	"amikom-pedia-api/utils"
 	"context"
 	"database/sql"
 	"errors"
@@ -27,7 +28,12 @@ func (userRepo *UserRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, user
 	return user
 }
 
-func (userRepo *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, user domain.User) {
+func (userRepo *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, user domain.User) domain.User {
+	SQL := `UPDATE "user" SET name = $1 , username = $2, bio = $3 WHERE uuid = $4`
+	_, err := tx.ExecContext(ctx, SQL, user.Name, user.Username, user.Bio, user.UUID)
+	helper.PanicIfError(err)
+
+	return user
 }
 
 func (userRepo *UserRepositoryImpl) FindByUUID(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
@@ -95,9 +101,23 @@ func (userRepo *UserRepositoryImpl) SetNewPassword(ctx context.Context, tx *sql.
 	return user
 }
 
-func (userRepo *UserRepositoryImpl) UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, newPassword string) error {
-	SQL := `UPDATE "user" SET password = $1 WHERE uuid = $2`
-	_, err := tx.ExecContext(ctx, SQL, newPassword, user.UUID)
+func (userRepo *UserRepositoryImpl) UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, oldPassword string, newPassword string) error {
+	SQL := `SELECT password FROM "user" WHERE uuid = $1`
+	row := tx.QueryRowContext(ctx, SQL, user.UUID)
+	var currentPasswordHash string
+	err := row.Scan(&currentPasswordHash)
+	helper.PanicIfError(err)
+
+	isCorrect := utils.CheckPasswordHash(oldPassword, currentPasswordHash)
+	if !isCorrect {
+		return errors.New("password does not match")
+	}
+
+	newPasswordHash, err := utils.HashPassword(newPassword)
+	helper.PanicIfError(err)
+
+	SQL = `UPDATE "user" SET password = $1 WHERE uuid = $2`
+	_, err = tx.ExecContext(ctx, SQL, newPasswordHash, user.UUID)
 	helper.PanicIfError(err)
 
 	return nil

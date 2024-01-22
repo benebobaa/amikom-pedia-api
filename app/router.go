@@ -14,6 +14,7 @@ func NewRouter(userController user_controller.UserController, registerController
 
 	router.POST("/api/v1/users", userController.Create)
 	router.GET("/api/v1/users", userController.FindAll)
+	router.PUT("/api/v1/users/update", userController.Update)
 	router.PUT("/api/v1/users/set-new-password", userController.SetNewPassword)
 	router.PUT("/api/v1/users/change-password", userController.UpdatePassword)
 	router.GET("/api/v1/users/:uuid", userController.FindByUUID)

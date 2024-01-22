@@ -8,11 +8,11 @@ import (
 
 type UserRepository interface {
 	Create(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
-	Update(ctx context.Context, tx *sql.Tx, user domain.User)
+	Update(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
 	Delete(ctx context.Context, tx *sql.Tx, user domain.User)
 	FindByUUID(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error)
 	FindAll(ctx context.Context, tx *sql.Tx) []domain.User
 	FindByEmail(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error)
 	SetNewPassword(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
-	UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, newPassword string) error
+	UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, oldPassword string, newPassword string) error
 }
