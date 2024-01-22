@@ -33,6 +33,23 @@ func (userController *UserControllerImpl) Create(writer http.ResponseWriter, req
 	helper.WriteToResponseBody(writer, baseResponse)
 }
 
+func (userController *UserControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	userUpdateRequest := user.UpdateRequestUser{}
+	helper.ReadFromRequestBody(request, &userUpdateRequest)
+
+	userUUID := userUpdateRequest.UUID
+
+	userResponse := userController.UserService.Update(request.Context(), userUUID, userUpdateRequest)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   userResponse,
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}
+
 func (userController *UserControllerImpl) FindByUUID(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	uuid := params.ByName("uuid")
 
@@ -95,6 +112,26 @@ func (userController *UserControllerImpl) SetNewPassword(writer http.ResponseWri
 	helper.ReadFromRequestBody(request, &userSetNewPassword)
 
 	userController.UserService.SetNewPassword(request.Context(), userSetNewPassword)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}
+
+func (userController *UserControllerImpl) UpdatePassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	newPasswordRequest := user.UpdatePasswordRequest{}
+	helper.ReadFromRequestBody(request, &newPasswordRequest)
+
+	userUUID := newPasswordRequest.UUID
+
+	err := userController.UserService.UpdatePassword(request.Context(), userUUID, newPasswordRequest)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	baseResponse := web.WebResponse{
 		Code:   200,
