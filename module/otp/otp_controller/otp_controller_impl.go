@@ -21,11 +21,12 @@ func (otpController *OtpControllerImpl) Validation(writer http.ResponseWriter, r
 	otpValidateRequest := otp.OtpValidateRequest{}
 	helper.ReadFromRequestBody(request, &otpValidateRequest)
 
-	otpController.OtpService.Validation(request.Context(), otpValidateRequest)
+	otpResponse := otpController.OtpService.Validation(request.Context(), otpValidateRequest)
 
 	baseResponse := web.WebResponse{
 		Code:   200,
 		Status: "OK",
+		Data:   otpResponse,
 	}
 
 	helper.WriteToResponseBody(writer, baseResponse)

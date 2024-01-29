@@ -3,7 +3,6 @@ package main
 import (
 	"amikom-pedia-api/app"
 	"amikom-pedia-api/helper"
-	"amikom-pedia-api/middleware"
 	"amikom-pedia-api/module/login/login_controller"
 	"amikom-pedia-api/module/login/login_repository"
 	"amikom-pedia-api/module/login/login_service"
@@ -48,7 +47,7 @@ func main() {
 	registerService := register_service.NewRegisterService(registerRepository, otpRepository, db, validate)
 	loginService := login_service.NewLoginService(tokenMaker, loginRepository, db, validate)
 	//otpService := otp_service.NewOtpService(otpRepository, registerRepository, gmailSender, db, validate)
-	otpService := otp_service.NewOtpService(otpRepository, registerRepository, userRepository, gmailSender, db, validate)
+	otpService := otp_service.NewOtpService(otpRepository, registerRepository, userRepository, gmailSender, db, validate, tokenMaker)
 
 	//CONTROLLER
 	userController := user_controller.NewUserController(userService)
@@ -56,11 +55,11 @@ func main() {
 	loginController := login_controller.NewLoginController(loginService)
 	otpController := otp_controller.NewOtpController(otpService)
 
-	router := app.NewRouter(userController, registerController, otpController, loginController)
+	router := app.NewRouter(tokenMaker, userController, registerController, otpController, loginController)
 
 	server := http.Server{
 		Addr:    config.ServerAddress,
-		Handler: middleware.NewAuthMiddleware(router, tokenMaker),
+		Handler: router,
 	}
 
 	err = server.ListenAndServe()

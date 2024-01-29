@@ -8,7 +8,9 @@ import (
 	"amikom-pedia-api/module/otp/otp_repository"
 	"amikom-pedia-api/module/register/register_repository"
 	"amikom-pedia-api/module/user/user_repository"
+	"amikom-pedia-api/utils"
 	"amikom-pedia-api/utils/mail"
+	"amikom-pedia-api/utils/token"
 	"context"
 	"database/sql"
 	"errors"
@@ -24,10 +26,11 @@ type OtpServiceImpl struct {
 	GmailSender        mail.EmailSender
 	DB                 *sql.DB
 	Validate           *validator.Validate
+	TokenMaker         token.Maker
 }
 
-func NewOtpService(otpRepository otp_repository.OtpRepository, registerRepository register_repository.RegisterRepository, userRepository user_repository.UserRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate) OtpService {
-	return &OtpServiceImpl{OtpRepository: otpRepository, RegisterRepository: registerRepository, UserRepository: userRepository, GmailSender: gmailSender, DB: DB, Validate: validate}
+func NewOtpService(otpRepository otp_repository.OtpRepository, registerRepository register_repository.RegisterRepository, userRepository user_repository.UserRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate, tokenMaker token.Maker) OtpService {
+	return &OtpServiceImpl{OtpRepository: otpRepository, RegisterRepository: registerRepository, UserRepository: userRepository, GmailSender: gmailSender, DB: DB, Validate: validate, TokenMaker: tokenMaker}
 }
 
 func (otpService *OtpServiceImpl) Create(ctx context.Context, request otp.CreateRequestOtp) otp.CreateResponseOTP {
@@ -50,7 +53,7 @@ func (otpService *OtpServiceImpl) Create(ctx context.Context, request otp.Create
 	return helper.ToOtpResponse(result)
 }
 
-func (otpService *OtpServiceImpl) Validation(ctx context.Context, request otp.OtpValidateRequest) {
+func (otpService *OtpServiceImpl) Validation(ctx context.Context, request otp.OtpValidateRequest) otp.CreateResponseWithToken {
 	err := otpService.Validate.Struct(request)
 	helper.PanicIfError(err)
 
@@ -76,16 +79,31 @@ func (otpService *OtpServiceImpl) Validation(ctx context.Context, request otp.Ot
 	}
 
 	if result.UserRid.Valid {
+		requestUserDomain := domain.User{
+			Email:    result.EmailUserRegister.String,
+			Nim:      result.Nim.String,
+			Name:     result.Name.String,
+			Username: utils.RandomString(7),
+			Password: result.Password.String}
+
 		paramsUpdate := domain.Register{
 			IsVerified:      true,
 			EmailVerifiedAt: sql.NullTime{Time: time.Now(), Valid: true},
 			ID:              int(result.UserRid.Int32),
 		}
 		otpService.RegisterRepository.Update(ctx, tx, paramsUpdate)
+		userCreate := otpService.UserRepository.Create(ctx, tx, requestUserDomain)
+		accessToken, err := otpService.TokenMaker.CreateToken(userCreate.Username, time.Minute*15)
+		helper.PanicIfError(err)
+
+		return helper.ToOtpResponseWithToken(sql.NullString{Valid: true, String: accessToken})
 	}
 	if result.UUID.Valid {
-		return
+		return helper.ToOtpResponseWithToken(sql.NullString{Valid: false})
 	}
+
+	return helper.ToOtpResponseWithToken(sql.NullString{Valid: false})
+
 }
 
 func (otpService *OtpServiceImpl) SendOtp(ctx context.Context, request otp.SendOtpRequest) error {

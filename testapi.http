@@ -4,10 +4,10 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "Bene",
-  "email": "bene@gmail.com",
-  "nim": "20.11.3757",
-  "password": "apaya"
+  "name": "bene",
+  "email": "test@gmail.com",
+  "nim": "20.11.3780",
+  "password": "testing1234"
 }
 
 ### Create a user
@@ -45,18 +45,17 @@ Content-Type: application/json
 #Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzNTRiMWFkLTRlOWMtNDU5ZC1hZWYxLWI3MjUyMmRkMzc2YiIsInVzZXJuYW1lIjoid2hvaXMiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjI3OjEwLjM4MjkyNzYyMiswNzowMCIsImV4cGlyZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjQyOjEwLjM4MjkyNzg5NiswNzowMCJ9.CTWQmbzPrgnPFBV1qaPwKLgcYyfMrTRl-n-9TiehsgI
 
 {
-  "ref_code":"lzkkpyyjkc33234",
-  "otp_value":"910076"
+  "ref_code":"lnlyccaqas82077",
+  "otp_value":"108894"
 }
 
 ### SEND OTP EMAIL
 POST http://localhost:8080/api/v1/otp/send
 Accept: application/json
 Content-Type: application/json
-#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFhMTZlNzVjLTA5NzEtNDI2MC1iODcwLTdmZTJlMjNmMGVjNiIsInVzZXJuYW1lIjoiQkVORUJPQkExMiIsImlzc3VlZF9hdCI6IjIwMjQtMDEtMTVUMTg6MDM6MTguNDUxMjUwMjg5KzA3OjAwIiwiZXhwaXJlZF9hdCI6IjIwMjQtMDEtMTVUMTg6MTg6MTguNDUxMjUwNDQ5KzA3OjAwIn0.mkO7yvH6os749DdZBVvaTobd9qWNk3WStKjbx7Mk2Sc
 
 {
-  "ref_code":"ppqdozvtbp49045"
+  "ref_code":"gilzhgygyk64257"
 }
 
 ### CREATE USER

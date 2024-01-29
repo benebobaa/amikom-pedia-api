@@ -7,6 +7,6 @@ import (
 
 type OtpService interface {
 	Create(ctx context.Context, request otp.CreateRequestOtp) otp.CreateResponseOTP
-	Validation(ctx context.Context, request otp.OtpValidateRequest)
+	Validation(ctx context.Context, request otp.OtpValidateRequest) otp.CreateResponseWithToken
 	SendOtp(ctx context.Context, request otp.SendOtpRequest) error
 }

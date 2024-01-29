@@ -6,6 +6,7 @@ import (
 	"amikom-pedia-api/model/web/otp"
 	"amikom-pedia-api/model/web/register"
 	"amikom-pedia-api/model/web/user"
+	"database/sql"
 )
 
 func ToUserResponse(userData domain.User) user.ResponseUser {
@@ -57,4 +58,11 @@ func ToSetNewPasswordResponse(otpData domain.Otp) user.ForgotPasswordResponse {
 	return user.ForgotPasswordResponse{
 		RefCode: otpData.RefCode,
 	}
+}
+
+func ToOtpResponseWithToken(accessToken sql.NullString) otp.CreateResponseWithToken {
+	return otp.CreateResponseWithToken{
+		AccessToken: accessToken.String,
+	}
+
 }
