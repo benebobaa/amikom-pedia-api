@@ -24,7 +24,7 @@ func (otpRepo *OtpRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, otp do
 }
 
 func (otpRepo *OtpRepositoryImpl) FindByRefCode(ctx context.Context, tx *sql.Tx, refCode string) (domain.Otp, error) {
-	SQL := `SELECT o.id, o.ref_code, o.otp_value, o.expired_at, o.created_at, o.user_rid, o.user_id, ur.email AS user_registration_email, u.email AS user_email
+	SQL := `SELECT o.id, o.ref_code, o.otp_value, o.expired_at, o.created_at, o.user_rid, o.user_id, ur.nim ,ur.name, ur.password, ur.email AS user_registration_email, u.email AS user_email
 				FROM
 					"otp" AS o
 				LEFT JOIN
@@ -41,7 +41,7 @@ func (otpRepo *OtpRepositoryImpl) FindByRefCode(ctx context.Context, tx *sql.Tx,
 	otp := domain.Otp{}
 
 	if rows.Next() {
-		errScan := rows.Scan(&otp.ID, &otp.RefCode, &otp.OtpValue, &otp.ExpiredAt, &otp.CreatedAt, &otp.UserRid, &otp.UUID, &otp.EmailUserRegister, &otp.EmailUser)
+		errScan := rows.Scan(&otp.ID, &otp.RefCode, &otp.OtpValue, &otp.ExpiredAt, &otp.CreatedAt, &otp.UserRid, &otp.UUID, &otp.Nim, &otp.Name, &otp.Password, &otp.EmailUserRegister, &otp.EmailUser)
 		helper.PanicIfError(errScan)
 		return otp, nil
 	} else {

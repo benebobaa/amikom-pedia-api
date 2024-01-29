@@ -9,6 +9,9 @@ type Otp struct {
 	ID                int
 	UserRid           sql.NullInt32
 	UUID              sql.NullString
+	Nim               sql.NullString
+	Name              sql.NullString
+	Password          sql.NullString
 	EmailUserRegister sql.NullString
 	EmailUser         sql.NullString
 	OtpValue          string
