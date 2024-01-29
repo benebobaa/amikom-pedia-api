@@ -19,7 +19,6 @@ import (
 	"amikom-pedia-api/utils/mail"
 	"amikom-pedia-api/utils/token"
 	"fmt"
-	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 	"net/http"
 )
@@ -34,7 +33,7 @@ func main() {
 
 	gmailSender := mail.NewGmailSender(config.EmailName, config.EmailSender, config.EmailPassword)
 	db := app.NewDB(config.DBDriver, config.DBSource)
-	validate := validator.New()
+	validate := utils.CustomValidator()
 
 	//REPOSITORY
 	userRepository := user_repository.NewUserRepository()

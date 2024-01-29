@@ -11,6 +11,7 @@ type Register struct {
 	Email           string
 	Nim             string
 	Password        string
+	ConfirmPassword string
 	RefCode         string
 	IsVerified      bool
 	EmailVerifiedAt sql.NullTime

@@ -4,10 +4,11 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "bene",
-  "email": "test@gmail.com",
-  "nim": "20.11.3780",
-  "password": "testing1234"
+  "name": "Bene",
+  "email": "bene@amikom.ac.id",
+  "nim": "20.11.3757",
+  "password": "@Apayaiyaiya02",
+  "confirm_password": "@Apayaiyaiya02"
 }
 
 ### Create a user
@@ -22,7 +23,8 @@ Content-Type: application/json
   "name": "Hanif",
   "username": "whois",
   "bio": "cobadeng",
-  "password": "apaya"
+  "password": "testingvalidation",
+    "confirm_password": "testingvalidation"
 }
 
 ### Update a user
@@ -79,7 +81,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "username_or_email":"hanifalirsyad.123@gmail.com",
+  "username_or_email":"whois",
   "password":"newpassword"
 
  }
@@ -109,7 +111,15 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "uuid": "5fe40338-89d3-4595-84dc-3c6c748d467a",
-  "current_password" : "hanif02",
-  "new_password" : "newpassword"
+  "uuid": "c9a1ece9-a8ff-4085-a39f-50a30f4b1d9d",
+  "current_password" : "testingvalidation",
+  "new_password" : "newpassword",
+  "confirm_new_password" : "newpassword"
+
+
 }
+
+### Delete User
+DELETE http://localhost:8080/api/v1/users/d677a14e-9fff-4056-9f7c-cc3a997f10d8
+Accept: application/json
+Content-Type: application/json
