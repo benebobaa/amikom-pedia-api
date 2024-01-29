@@ -18,13 +18,13 @@ Content-Type: application/json
 #Authorization: Bearer eYJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2NzE0MGUwLTAyMWItNGM4ZS1iNjc3LTI4MDQwMWFmMGQ4NSIsInVzZXJuYW1lIjoiYmVuZWJvYmEiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTEyVDE2OjQzOjIxLjY4MTc1MTIrMDc6MDAiLCJleHBpcmVkX2F0IjoiMjAyNC0wMS0xMlQxNjo1ODoyMS42ODE3NTEyKzA3OjAwIn0.hMoQ8DhOt2kk5nOnAdAPLuQ5s-JaBRsHJRJSd71LvOg
 
 {
-  "email": "hanifalirsyad.123@gmail.com",
-  "nim": "20.11.3740",
+  "email": "hanifalirsyad.123@amikom.ac.id",
+  "nim": "20.11.3745",
   "name": "Hanif",
   "username": "whois",
   "bio": "cobadeng",
-  "password": "testingvalidation",
-    "confirm_password": "testingvalidation"
+  "password": "@Test0029",
+    "confirm_password": "@Test0029"
 }
 
 ### Update a user
@@ -82,7 +82,7 @@ Content-Type: application/json
 
 {
   "username_or_email":"whois",
-  "password":"newpassword"
+  "password":"@Test0029"
 
  }
 

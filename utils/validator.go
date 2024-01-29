@@ -2,13 +2,16 @@ package utils
 
 import (
 	"github.com/go-playground/validator/v10"
+	"regexp"
 	"strings"
 	"unicode"
 )
 
-func validateAmikomEmail(field validator.FieldLevel) bool {
-	email := field.Field().Interface().(string)
-	return strings.HasSuffix(email, "@student.amikom.ac.id") || strings.HasSuffix(email, "@amikom.ac.id")
+func validateAmikomEmailOrUsername(field validator.FieldLevel) bool {
+	emailOrUsername := field.Field().Interface().(string)
+	emailRegex := `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
+	isEmail, _ := regexp.MatchString(emailRegex, emailOrUsername)
+	return isEmail && (strings.HasSuffix(emailOrUsername, "@students.amikom.ac.id") || strings.HasSuffix(emailOrUsername, "@amikom.ac.id")) || !isEmail
 }
 
 func containsAny(fl validator.FieldLevel) bool {
@@ -36,7 +39,7 @@ func containsNumeric(fl validator.FieldLevel) bool {
 
 func CustomValidator() *validator.Validate {
 	validate := validator.New()
-	_ = validate.RegisterValidation("amikom", validateAmikomEmail)
+	_ = validate.RegisterValidation("amikom", validateAmikomEmailOrUsername)
 	_ = validate.RegisterValidation("containsany", containsAny)
 	_ = validate.RegisterValidation("containslowercase", containsLowercase)
 	_ = validate.RegisterValidation("containsuppercase", containsUppercase)
