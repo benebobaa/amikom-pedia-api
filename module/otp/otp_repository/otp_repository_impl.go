@@ -48,3 +48,9 @@ func (otpRepo *OtpRepositoryImpl) FindByRefCode(ctx context.Context, tx *sql.Tx,
 		return otp, errors.New("refferal code not found")
 	}
 }
+
+func (otpRepo *OtpRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, otp domain.Otp) error {
+	SQL := `UPDATE "otp" SET otp_value = $1, expired_at = $2 WHERE ref_code = $3`
+	_, err := tx.ExecContext(ctx, SQL, otp.OtpValue, otp.ExpiredAt, otp.RefCode)
+	return err
+}
