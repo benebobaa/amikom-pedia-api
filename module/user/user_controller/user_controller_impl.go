@@ -2,19 +2,24 @@ package user_controller
 
 import (
 	"amikom-pedia-api/helper"
+	"amikom-pedia-api/middleware"
 	"amikom-pedia-api/model/web"
 	"amikom-pedia-api/model/web/user"
+	"amikom-pedia-api/module/image/image_service"
 	"amikom-pedia-api/module/user/user_service"
+	"amikom-pedia-api/utils"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"strings"
 )
 
 type UserControllerImpl struct {
-	UserService user_service.UserService
+	UserService  user_service.UserService
+	ImageService image_service.ImageService
 }
 
-func NewUserController(userService user_service.UserService) UserController {
-	return &UserControllerImpl{UserService: userService}
+func NewUserController(userService user_service.UserService, imageService image_service.ImageService) UserController {
+	return &UserControllerImpl{UserService: userService, ImageService: imageService}
 }
 
 func (userController *UserControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -34,20 +39,71 @@ func (userController *UserControllerImpl) Create(writer http.ResponseWriter, req
 }
 
 func (userController *UserControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	userUpdateRequest := user.UpdateRequestUser{}
-	helper.ReadFromRequestBody(request, &userUpdateRequest)
+	// Check the Content-Type header to determine the request type
+	contentType := request.Header.Get("Content-Type")
 
-	userUUID := userUpdateRequest.UUID
+	authPayload := request.Header.Get(middleware.AuthorizationPayloadKey)
+	userNId, _ := utils.FromStringToUsernameAndUUID(authPayload)
+	userUUID := userNId.UserID
 
-	userResponse := userController.UserService.Update(request.Context(), userUUID, userUpdateRequest)
+	if strings.Contains(contentType, "application/json") {
+		// JSON request
+		userUpdateRequest := user.UpdateRequestUser{}
+		helper.ReadFromRequestBody(request, &userUpdateRequest)
 
-	baseResponse := web.WebResponse{
-		Code:   200,
-		Status: "OK",
-		Data:   userResponse,
+		//authPayload := request.Header.Get(middleware.AuthorizationPayloadKey)
+		//userNId, _ := utils.FromStringToUsernameAndUUID(authPayload)
+		//userUUID := userNId.UserID
+
+		userResponse := userController.UserService.Update(request.Context(), userUUID, userUpdateRequest)
+
+		baseResponse := web.WebResponse{
+			Code:   http.StatusOK,
+			Status: "OK",
+			Data:   userResponse,
+		}
+
+		helper.WriteToResponseBody(writer, baseResponse)
+	} else if strings.Contains(contentType, "multipart/form-data") {
+		// Form data request
+		err := request.ParseMultipartForm(10 << 20) // 10 MB limit, adjust as needed
+		if err != nil {
+			http.Error(writer, "Unable to parse form data", http.StatusBadRequest)
+			return
+		}
+
+		//Form-Data Request
+		userUpdateRequest := user.UpdateRequestUser{
+			Username: request.FormValue("username"),
+			Name:     request.FormValue("name"),
+			Bio:      request.FormValue("bio"),
+			// Add other form fields as needed
+		}
+		_, imgHeaderhdr, err := request.FormFile("img_header")
+		_, imgHeaderavtr, err := request.FormFile("img_avatar")
+		if imgHeaderhdr != nil || imgHeaderavtr != nil {
+
+			userController.ImageService.UploadToS3(request.Context(), userUUID, imgHeaderavtr, imgHeaderhdr)
+
+		}
+
+		//fmt.Println("imgHeaderhdr:", imgHeaderhdr)
+		//
+		//fmt.Println("imgHeaderavtr:", imgHeaderavtr)
+
+		userResponse := userController.UserService.Update(request.Context(), userUUID, userUpdateRequest)
+
+		baseResponse := web.WebResponse{
+			Code:   http.StatusOK,
+			Status: "OK",
+			Data:   userResponse,
+		}
+
+		helper.WriteToResponseBody(writer, baseResponse)
+	} else {
+		// Unsupported content type
+		http.Error(writer, "Unsupported Content-Type", http.StatusUnsupportedMediaType)
 	}
-
-	helper.WriteToResponseBody(writer, baseResponse)
 }
 
 func (userController *UserControllerImpl) FindByUUID(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -125,7 +181,11 @@ func (userController *UserControllerImpl) UpdatePassword(writer http.ResponseWri
 	newPasswordRequest := user.UpdatePasswordRequest{}
 	helper.ReadFromRequestBody(request, &newPasswordRequest)
 
-	userUUID := newPasswordRequest.UUID
+	authPayload := request.Header.Get(middleware.AuthorizationPayloadKey)
+
+	userNId, _ := utils.FromStringToUsernameAndUUID(authPayload)
+
+	userUUID := userNId.UserID
 
 	err := userController.UserService.UpdatePassword(request.Context(), userUUID, newPasswordRequest)
 	if err != nil {

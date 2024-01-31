@@ -12,6 +12,10 @@ type Config struct {
 	EmailName        string `mapstructure:"EMAIL_NAME"`
 	EmailSender      string `mapstructure:"EMAIL_SENDER"`
 	EmailPassword    string `mapstructure:"EMAIL_PASSWORD"`
+	AWSRegion        string `mapstructure:"AWS_REGION"`
+	AWSS3Bucket      string `mapstructure:"AWS_S3_BUCKET"`
+	AWSAccessKey     string `mapstructure:"AWS_ACCESS_KEY"`
+	AWSSecretKey     string `mapstructure:"AWS_SECRET_KEY"`
 }
 
 func LoadConfig(path string) (config Config, err error) {
