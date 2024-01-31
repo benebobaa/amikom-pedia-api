@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: AmikomPedia API Specification
+  description: AmikomPedia API Specification for Development
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/api/v1'
+paths:
+  /register:
+    post:
+      summary: Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                nim:
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+                confirm_password:
+                    type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ref_code:
+                    type: string
+                  email:
+                    type: string
+                  nim:
+                    type: string
+                  name:
+                    type: string
+                  is_verified:
+                    type: boolean
+                  email_verified_at:
+                    type: string
+                  created_at:
+                    type: string
+        '400':
+            description: Bad Request
+            content:
+                application/json:
+                schema:
+                    type: object
+                    properties:
+                    message:
+                        type: string
+  /otp/send:
+    post:
+      summary: Send OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ref_code:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+  /otp/resend:
+    post:
+      summary: Resend OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ref_code:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+  /otp/validate:
+    post:
+      summary: Validate OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ref_code:
+                  type: string
+                otp_value:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+  /login:
+    post:
+      summary: Login User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username_or_email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  uuid:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  nim:
+                    type: string
+                  bio:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+  /users:
+    post:
+      summary: Create User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                name:
+                  type: string
+                nim:
+                  type: string
+                password:
+                    type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  uuid:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  nim:
+                    type: string
+                  bio:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+    get:
+      summary: Get All Users
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  uuid:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  nim:
+                    type: string
+                  bio:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+  /users/update:
+    put:
+      summary: Update User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                bio:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  uuid:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  nim:
+                    type: string
+                  bio:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+  /users/forgot-password:
+    post:
+      summary: Forgot Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ref_code:
+                    type: string
+  /users/set-new-password:
+    put:
+      summary: Set New Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                password:
+                  type: string
+                confirm_password:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+  /users/change-password:
+    put:
+      summary: Change Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+                confirm_new_password:
+                    type: string
+      responses:
+        '200':
+          description: Successful operation
+  /users/{uuid}:
+    get:
+      summary: Get User by UUID
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+    delete:
+      summary: Delete User by UUID
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
