@@ -119,18 +119,18 @@ func (otpService *OtpServiceImpl) SendOtp(ctx context.Context, request otp.SendO
 		panic(exception.NewNotFoundError(err.Error()))
 	}
 
-	var toEmail string
+	//var toEmail string
 
 	if result.UserRid.Valid {
-		toEmail = result.EmailUserRegister.String
-		err = otpService.sendingOtp(toEmail, result.OtpValue)
+		//toEmail = result.EmailUserRegister.String
+		//err = otpService.sendingOtp(toEmail, result.OtpValue)
 		if err != nil {
 			panic(exception.NewOtpError(err.Error()))
 		}
 		return nil
 	} else if result.UUID.Valid {
-		toEmail = result.EmailUser.String
-		err = otpService.sendingOtp(toEmail, result.OtpValue)
+		//toEmail = result.EmailUser.String
+		//err = otpService.sendingOtp(toEmail, result.OtpValue)
 		if err != nil {
 			panic(exception.NewOtpError(err.Error()))
 		}
@@ -166,14 +166,20 @@ func (otpService *OtpServiceImpl) ResendOtp(ctx context.Context, request otp.Sen
 
 	if result.UserRid.Valid {
 		toEmail = result.EmailUserRegister.String
-		err = otpService.sendingOtp(toEmail, newOtp)
+
+		subject, content, toEmail := mail.GetSenderParamEmailRegist(toEmail, newOtp)
+		err = otpService.GmailSender.SendEmail(subject, content, toEmail, []string{}, []string{}, []string{})
+
 		if err != nil {
 			panic(exception.NewOtpError(err.Error()))
 		}
 		return nil
 	} else if result.UUID.Valid {
 		toEmail = result.EmailUser.String
-		err = otpService.sendingOtp(toEmail, newOtp)
+
+		subject, content, toEmail := mail.GetSenderParamEmailForgotPass(toEmail, newOtp)
+		err = otpService.GmailSender.SendEmail(subject, content, toEmail, []string{}, []string{}, []string{})
+
 		if err != nil {
 			panic(exception.NewOtpError(err.Error()))
 		}
@@ -182,30 +188,4 @@ func (otpService *OtpServiceImpl) ResendOtp(ctx context.Context, request otp.Sen
 
 	return errors.New("email not found")
 
-}
-
-func (otpService *OtpServiceImpl) sendingOtp(email string, otpCode string) error {
-	subject := "OTP Verification for Amikom Pedia"
-
-	// Use fmt.Sprintf to dynamically insert values into the content string
-	content := fmt.Sprintf(`
-        <h1>Hello %s,</h1>
-
-        <p>We're excited to have you on board with Amikom Pedia! As part of our security measures, please use the following One-Time Password (OTP) to verify your account:</p>
-
-        <h2>%s</h2>
-
-        <p>This OTP is valid for a single use and will expire in 1 minute. Please do not share it with anyone for security reasons.</p>
-
-        <p>If you did not attempt to create an account with Amikom Pedia, please disregard this email. Your account security is important to us.</p>
-
-        <p>Thank you for choosing Amikom Pedia!</p>
-    `, email, otpCode)
-
-	to := []string{email}
-	err := otpService.GmailSender.SendEmail(subject, content, to, []string{}, []string{}, []string{})
-	if err != nil {
-		return errors.New("failed to send email")
-	}
-	return nil
 }

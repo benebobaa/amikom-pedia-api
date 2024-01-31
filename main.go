@@ -42,8 +42,8 @@ func main() {
 	loginRepository := login_repository.NewLoginRepository()
 
 	//SERVICE
-	userService := user_service.NewUserService(userRepository, otpRepository, db, validate)
-	registerService := register_service.NewRegisterService(registerRepository, otpRepository, db, validate)
+	userService := user_service.NewUserService(userRepository, otpRepository, gmailSender, db, validate)
+	registerService := register_service.NewRegisterService(registerRepository, otpRepository, gmailSender, db, validate)
 	loginService := login_service.NewLoginService(tokenMaker, loginRepository, db, validate)
 	//otpService := otp_service.NewOtpService(otpRepository, registerRepository, gmailSender, db, validate)
 	otpService := otp_service.NewOtpService(otpRepository, registerRepository, userRepository, gmailSender, db, validate, tokenMaker)

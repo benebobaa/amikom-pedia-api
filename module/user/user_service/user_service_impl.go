@@ -8,6 +8,7 @@ import (
 	"amikom-pedia-api/module/otp/otp_repository"
 	"amikom-pedia-api/module/user/user_repository"
 	"amikom-pedia-api/utils"
+	"amikom-pedia-api/utils/mail"
 	"context"
 	"database/sql"
 	"errors"
@@ -20,12 +21,13 @@ import (
 type UserServiceImpl struct {
 	UserRepository user_repository.UserRepository
 	OtpRepository  otp_repository.OtpRepository
+	GmailSender    mail.EmailSender
 	DB             *sql.DB
 	Validate       *validator.Validate
 }
 
-func NewUserService(userRepository user_repository.UserRepository, otpRepository otp_repository.OtpRepository, DB *sql.DB, validate *validator.Validate) UserService {
-	return &UserServiceImpl{UserRepository: userRepository, OtpRepository: otpRepository, DB: DB, Validate: validate}
+func NewUserService(userRepository user_repository.UserRepository, otpRepository otp_repository.OtpRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate) UserService {
+	return &UserServiceImpl{UserRepository: userRepository, OtpRepository: otpRepository, GmailSender: gmailSender, DB: DB, Validate: validate}
 }
 
 func (userService *UserServiceImpl) Create(ctx context.Context, requestUser user.CreateRequestUser) user.ResponseUser {
@@ -151,6 +153,10 @@ func (userService *UserServiceImpl) ForgotPassword(ctx context.Context, email st
 	}
 
 	resultOTP := userService.OtpRepository.Create(ctx, tx, otpData)
+
+	subject, content, toEmail := mail.GetSenderParamEmailForgotPass(result.Email, resultOTP.OtpValue)
+	err = userService.GmailSender.SendEmail(subject, content, toEmail, []string{}, []string{}, []string{})
+	helper.PanicIfError(err)
 
 	return helper.ToSetNewPasswordResponse(resultOTP)
 

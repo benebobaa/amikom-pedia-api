@@ -11,6 +11,7 @@ import (
 	"amikom-pedia-api/utils/mail"
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"strconv"
 	"time"
@@ -19,13 +20,13 @@ import (
 type RegisterServiceImpl struct {
 	RegisterRepository register_repository.RegisterRepository
 	OtpRepository      otp_repository.OtpRepository
-	GmailSender        mail.GmailSender
+	GmailSender        mail.EmailSender
 	DB                 *sql.DB
 	Validate           *validator.Validate
 }
 
-func NewRegisterService(registerRepository register_repository.RegisterRepository, otpRepository otp_repository.OtpRepository, DB *sql.DB, validate *validator.Validate) RegisterService {
-	return &RegisterServiceImpl{RegisterRepository: registerRepository, OtpRepository: otpRepository, DB: DB, Validate: validate}
+func NewRegisterService(registerRepository register_repository.RegisterRepository, otpRepository otp_repository.OtpRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate) RegisterService {
+	return &RegisterServiceImpl{RegisterRepository: registerRepository, OtpRepository: otpRepository, GmailSender: gmailSender, DB: DB, Validate: validate}
 }
 
 func (registerService *RegisterServiceImpl) Create(ctx context.Context, requestRegister register.RegisterRequest) register.RegisterResponse {
@@ -66,5 +67,10 @@ func (registerService *RegisterServiceImpl) Create(ctx context.Context, requestR
 
 	resultOTP := registerService.OtpRepository.Create(ctx, tx, otpData)
 
+	subject, content, toEmail := mail.GetSenderParamEmailRegist(result.Email, resultOTP.OtpValue)
+
+	err = registerService.GmailSender.SendEmail(subject, content, toEmail, []string{}, []string{}, []string{})
+	fmt.Println("Error", err)
+	helper.PanicIfError(err)
 	return helper.ToRegisterResponse(result, resultOTP)
 }

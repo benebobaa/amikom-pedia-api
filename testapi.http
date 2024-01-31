@@ -5,10 +5,10 @@ Content-Type: application/json
 
 {
   "name": "Benediktus Neira",
-  "email": "bene@amikom.ac.id",
+  "email": "benediktus@students.amikom.ac.id",
   "nim": "20.11.3782",
-  "password": "@Apayaiyaiya02",
-  "confirm_password": "@Apayaiyaiya02"
+  "password": "@Iyakahmanis123",
+  "confirm_password": "@Iyakahmanis123"
 }
 
 ### Create a user
@@ -57,7 +57,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "ref_code":"ftbjfppfja42703"
+  "ref_code":"mpirjeejqk14399"
 }
 
 ### RE-SEND OTP EMAIL

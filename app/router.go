@@ -20,7 +20,7 @@ func NewRouter(tokenMaker token.Maker, userController user_controller.UserContro
 	router.POST("/api/v1/register", midWare.LoggingMiddleware(registerController.Create))
 	router.POST("/api/v1/users/forgot-password", midWare.LoggingMiddleware(userController.ForgotPassword))
 	router.POST("/api/v1/otp/validate", midWare.LoggingMiddleware(otpController.Validation))
-	router.POST("/api/v1/otp/send", midWare.LoggingMiddleware(otpController.SendOtp))
+	//router.POST("/api/v1/otp/send", midWare.LoggingMiddleware(otpController.SendOtp))
 	router.POST("/api/v1/otp/resend", midWare.LoggingMiddleware(otpController.ResendOtp))
 
 	//Include Auth Middleware

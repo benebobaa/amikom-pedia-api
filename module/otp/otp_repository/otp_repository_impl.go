@@ -15,9 +15,9 @@ func NewOtpRepository() OtpRepository {
 }
 
 func (otpRepo *OtpRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, otp domain.Otp) domain.Otp {
-	SQL := `INSERT INTO "otp" (user_id, user_rid, otp_value, expired_at, ref_code) VALUES ($1, $2, $3, $4, $5) RETURNING ref_code, user_id, user_rid`
+	SQL := `INSERT INTO "otp" (user_id, user_rid, otp_value, expired_at, ref_code) VALUES ($1, $2, $3, $4, $5) RETURNING ref_code, otp_value, user_id, user_rid`
 	rows := tx.QueryRowContext(ctx, SQL, otp.UUID, otp.UserRid, otp.OtpValue, otp.ExpiredAt, otp.RefCode)
-	err := rows.Scan(&otp.RefCode, &otp.UUID, &otp.UserRid)
+	err := rows.Scan(&otp.RefCode, &otp.OtpValue, &otp.UUID, &otp.UserRid)
 	helper.PanicIfError(err)
 
 	return otp
