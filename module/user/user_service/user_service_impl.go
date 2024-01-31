@@ -11,6 +11,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"strconv"
 	"time"
@@ -56,6 +57,7 @@ func (userService *UserServiceImpl) Update(ctx context.Context, uuid string, req
 	err := userService.Validate.Struct(requestUser)
 	helper.PanicIfError(err)
 
+	fmt.Println("requestUser : ", requestUser)
 	tx, err := userService.DB.Begin()
 	helper.PanicIfError(err)
 

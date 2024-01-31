@@ -26,7 +26,7 @@ func NewRouter(tokenMaker token.Maker, userController user_controller.UserContro
 	//Include Auth Middleware
 	router.POST("/api/v1/users", userController.Create)
 	router.GET("/api/v1/users", userController.FindAll)
-	router.PUT("/api/v1/users/update", userController.Update)
+	router.PUT("/api/v1/users/update", midWare.WrapperMiddleware(userController.Update))
 	router.PUT("/api/v1/users/set-new-password", userController.SetNewPassword)
 	router.PUT("/api/v1/users/change-password", userController.UpdatePassword)
 	router.GET("/api/v1/users/:uuid", userController.FindByUUID)

@@ -4,9 +4,9 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "Hanif Al Irsyad",
-  "email": "hanifalirsyad.123@amikom.ac.id",
-  "nim": "20.11.3790",
+  "name": "Benediktus Neira",
+  "email": "bene@amikom.ac.id",
+  "nim": "20.11.3782",
   "password": "@Apayaiyaiya02",
   "confirm_password": "@Apayaiyaiya02"
 }
@@ -47,8 +47,8 @@ Content-Type: application/json
 #Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzNTRiMWFkLTRlOWMtNDU5ZC1hZWYxLWI3MjUyMmRkMzc2YiIsInVzZXJuYW1lIjoid2hvaXMiLCJpc3N1ZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjI3OjEwLjM4MjkyNzYyMiswNzowMCIsImV4cGlyZWRfYXQiOiIyMDI0LTAxLTE1VDIxOjQyOjEwLjM4MjkyNzg5NiswNzowMCJ9.CTWQmbzPrgnPFBV1qaPwKLgcYyfMrTRl-n-9TiehsgI
 
 {
-  "ref_code":"lnlyccaqas82077",
-  "otp_value":"108894"
+  "ref_code":"mpirjeejqk14399",
+  "otp_value":"393815"
 }
 
 ### SEND OTP EMAIL
@@ -91,7 +91,7 @@ Content-Type: application/json
 
 {
   "username_or_email":"hanifalirsyad.123@amikom.ac.id",
-  "password":"@Test0029"
+  "password":"@Apayaiyaiya02"
 
  }
 

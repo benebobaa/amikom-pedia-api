@@ -51,7 +51,7 @@ func (loginService *LoginServiceImpl) Login(ctx context.Context, request login.L
 		panic(exception.NewUnauthorizedError("wrong password"))
 	}
 
-	accessToken, err := loginService.TokenMaker.CreateToken(result.Username, time.Minute*15)
+	accessToken, err := loginService.TokenMaker.CreateToken(result.Username, result.UUID, time.Minute*15)
 
 	helper.PanicIfError(err)
 

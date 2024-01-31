@@ -2,9 +2,12 @@ package user_controller
 
 import (
 	"amikom-pedia-api/helper"
+	"amikom-pedia-api/middleware"
 	"amikom-pedia-api/model/web"
 	"amikom-pedia-api/model/web/user"
 	"amikom-pedia-api/module/user/user_service"
+	"amikom-pedia-api/utils"
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -37,7 +40,13 @@ func (userController *UserControllerImpl) Update(writer http.ResponseWriter, req
 	userUpdateRequest := user.UpdateRequestUser{}
 	helper.ReadFromRequestBody(request, &userUpdateRequest)
 
-	userUUID := userUpdateRequest.UUID
+	authPayload := request.Header.Get(middleware.AuthorizationPayloadKey)
+
+	userNId, _ := utils.FromStringToUsernameAndUUID(authPayload)
+
+	fmt.Println("userNId:", userNId)
+	fmt.Println("USER UUID:", userNId.UserID)
+	userUUID := userNId.UserID
 
 	userResponse := userController.UserService.Update(request.Context(), userUUID, userUpdateRequest)
 

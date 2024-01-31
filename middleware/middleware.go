@@ -3,6 +3,7 @@ package middleware
 import (
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/web"
+	"amikom-pedia-api/utils"
 	"amikom-pedia-api/utils/token"
 	"errors"
 	"github.com/julienschmidt/httprouter"
@@ -15,7 +16,7 @@ import (
 const (
 	authorizationHeaderKey  = "authorization"
 	authorizationTypeBearer = "bearer"
-	authorizationPayloadKey = "authorization_payload"
+	AuthorizationPayloadKey = "authorization_payload"
 )
 
 type Middleware struct {
@@ -52,8 +53,9 @@ func (m *Middleware) AuthMiddleware(next httprouter.Handle) httprouter.Handle {
 			if err != nil {
 				m.unauthorizedResponse(w, err.Error())
 			} else {
-				r.Header.Set(authorizationPayloadKey, payload.Username)
-				m.Handler.ServeHTTP(w, r)
+				r.Header.Set(AuthorizationPayloadKey, utils.FromUsernameAndUUIDToString(payload.Username, payload.UserID))
+				//m.Handler.ServeHTTP(w, r)
+				next(w, r, params)
 			}
 		}
 

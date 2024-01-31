@@ -93,7 +93,7 @@ func (otpService *OtpServiceImpl) Validation(ctx context.Context, request otp.Ot
 		}
 		otpService.RegisterRepository.Update(ctx, tx, paramsUpdate)
 		userCreate := otpService.UserRepository.Create(ctx, tx, requestUserDomain)
-		accessToken, err := otpService.TokenMaker.CreateToken(userCreate.Username, time.Minute*1)
+		accessToken, err := otpService.TokenMaker.CreateToken(userCreate.Username, userCreate.UUID, time.Minute*1)
 		helper.PanicIfError(err)
 
 		return helper.ToOtpResponseWithToken(sql.NullString{Valid: true, String: accessToken})
