@@ -30,7 +30,7 @@ func NewAwsS3(session *awsSess.Session, awsBucket string) *AwsS3 {
 }
 
 type AwsS3File interface {
-	UploadFile(file []byte, fileName string) (string, error)
+	UploadFile(file []byte, imgType string) (string, error)
 	//ValidateImageType(contentType string) bool
 }
 
@@ -85,7 +85,7 @@ func (a *AwsS3) UploadFile(file *multipart.FileHeader, imgType string) (Image, e
 
 	newImage := Image{
 		FilePath:  objectKey,
-		ImageType: fileType,
+		ImageType: imgType,
 		ImageUrl:  fmt.Sprintf("https://%s.s3.amazonaws.com/%s", a.AwsBucket, objectKey),
 	}
 
@@ -118,14 +118,17 @@ func (a *AwsS3) resizeImageBytes(imageBytes []byte, fileName, imgType string) ([
 	// Resize the image (adjust dimensions as needed) as ImgType
 	switch imgType {
 	case ImgHeader:
-		resizedImg = resize.Resize(1200, 400, img, resize.Lanczos3)
+		resizedImg = resize.Resize(1200, 400, img, resize.Lanczos2)
 		objectKey = "profile-header/" + fileName
 	case ImgAvatar:
 		resizedImg = resize.Resize(500, 500, img, resize.Lanczos3)
 		objectKey = "profile-avatar/" + fileName
-	default:
+	case ImgPost:
 		resizedImg = img
 		objectKey = "post/" + fileName
+	default:
+		resizedImg = img
+		objectKey = fileName
 	}
 	//resizedImg := resize.Resize(width, height, img, resize.Lanczos3)
 

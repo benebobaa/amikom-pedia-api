@@ -28,7 +28,7 @@ func NewRouter(tokenMaker token.Maker, userController user_controller.UserContro
 	router.GET("/api/v1/users", userController.FindAll)
 	router.PUT("/api/v1/users/update", midWare.WrapperMiddleware(userController.Update))
 	router.PUT("/api/v1/users/set-new-password", userController.SetNewPassword)
-	router.PUT("/api/v1/users/change-password", userController.UpdatePassword)
+	router.PUT("/api/v1/users/change-password", midWare.WrapperMiddleware(userController.UpdatePassword))
 	router.GET("/api/v1/users/:uuid", userController.FindByUUID)
 	router.DELETE("/api/v1/users/:uuid", userController.Delete)
 
