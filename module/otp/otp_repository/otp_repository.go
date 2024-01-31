@@ -9,4 +9,5 @@ import (
 type OtpRepository interface {
 	Create(ctx context.Context, tx *sql.Tx, otp domain.Otp) domain.Otp
 	FindByRefCode(ctx context.Context, tx *sql.Tx, refCode string) (domain.Otp, error)
+	Update(ctx context.Context, tx *sql.Tx, otp domain.Otp) error
 }

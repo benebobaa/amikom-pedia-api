@@ -93,7 +93,7 @@ func (otpService *OtpServiceImpl) Validation(ctx context.Context, request otp.Ot
 		}
 		otpService.RegisterRepository.Update(ctx, tx, paramsUpdate)
 		userCreate := otpService.UserRepository.Create(ctx, tx, requestUserDomain)
-		accessToken, err := otpService.TokenMaker.CreateToken(userCreate.Username, time.Minute*15)
+		accessToken, err := otpService.TokenMaker.CreateToken(userCreate.Username, time.Minute*1)
 		helper.PanicIfError(err)
 
 		return helper.ToOtpResponseWithToken(sql.NullString{Valid: true, String: accessToken})
@@ -138,6 +138,50 @@ func (otpService *OtpServiceImpl) SendOtp(ctx context.Context, request otp.SendO
 	}
 
 	return errors.New("email not found")
+}
+
+func (otpService *OtpServiceImpl) ResendOtp(ctx context.Context, request otp.SendOtpRequest) error {
+	err := otpService.Validate.Struct(request)
+	helper.PanicIfError(err)
+
+	tx, err := otpService.DB.Begin()
+	helper.PanicIfError(err)
+
+	defer helper.CommitOrRollback(tx)
+
+	newOtp := utils.GenerateNewOtpValue()
+
+	result, err := otpService.OtpRepository.FindByRefCode(ctx, tx, request.RefCode)
+	if err != nil {
+		panic(exception.NewOtpError(err.Error()))
+	}
+
+	result.OtpValue = newOtp
+	err = otpService.OtpRepository.Update(ctx, tx, result)
+	if err != nil {
+		return err
+	}
+
+	var toEmail string
+
+	if result.UserRid.Valid {
+		toEmail = result.EmailUserRegister.String
+		err = otpService.sendingOtp(toEmail, newOtp)
+		if err != nil {
+			panic(exception.NewOtpError(err.Error()))
+		}
+		return nil
+	} else if result.UUID.Valid {
+		toEmail = result.EmailUser.String
+		err = otpService.sendingOtp(toEmail, newOtp)
+		if err != nil {
+			panic(exception.NewOtpError(err.Error()))
+		}
+		return nil
+	}
+
+	return errors.New("email not found")
+
 }
 
 func (otpService *OtpServiceImpl) sendingOtp(email string, otpCode string) error {

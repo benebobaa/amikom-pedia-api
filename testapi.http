@@ -4,9 +4,9 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "Bene",
-  "email": "bene@amikom.ac.id",
-  "nim": "20.11.3757",
+  "name": "Hanif Al Irsyad",
+  "email": "hanifalirsyad.123@amikom.ac.id",
+  "nim": "20.11.3790",
   "password": "@Apayaiyaiya02",
   "confirm_password": "@Apayaiyaiya02"
 }
@@ -57,7 +57,16 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "ref_code":"gilzhgygyk64257"
+  "ref_code":"ftbjfppfja42703"
+}
+
+### RE-SEND OTP EMAIL
+POST http://localhost:8080/api/v1/otp/resend
+Accept: application/json
+Content-Type: application/json
+
+{
+  "ref_code":"ftbjfppfja42703"
 }
 
 ### CREATE USER
@@ -81,7 +90,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "username_or_email":"whois",
+  "username_or_email":"hanifalirsyad.123@amikom.ac.id",
   "password":"@Test0029"
 
  }

@@ -46,3 +46,18 @@ func (otpController *OtpControllerImpl) SendOtp(writer http.ResponseWriter, requ
 
 	helper.WriteToResponseBody(writer, baseResponse)
 }
+
+func (otpController *OtpControllerImpl) ResendOtp(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	resendOtpRequest := otp.SendOtpRequest{}
+	helper.ReadFromRequestBody(request, &resendOtpRequest)
+
+	err := otpController.OtpService.ResendOtp(request.Context(), resendOtpRequest)
+	helper.PanicIfError(err)
+
+	baseResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, baseResponse)
+}
