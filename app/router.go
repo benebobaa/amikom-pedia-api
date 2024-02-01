@@ -3,34 +3,32 @@ package app
 import (
 	"amikom-pedia-api/exception"
 	"amikom-pedia-api/middleware"
-	"amikom-pedia-api/module/login/login_controller"
-	"amikom-pedia-api/module/otp/otp_controller"
-	"amikom-pedia-api/module/register/register_controller"
-	"amikom-pedia-api/module/user/user_controller"
-	"amikom-pedia-api/utils/token"
+	"amikom-pedia-api/utils"
+
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(tokenMaker token.Maker, userController user_controller.UserController, registerController register_controller.RegisterController, otpController otp_controller.OtpController, loginController login_controller.LoginController) *httprouter.Router {
+func NewRouter(config utils.Config) *httprouter.Router {
+	controller := NewController(config)
 	router := httprouter.New()
-	midWare := middleware.NewMiddleware(router, tokenMaker)
+	midWare := middleware.NewMiddleware(router, controller.TokenMaker)
 
-	//Exclude Auth Middleware
-	router.POST("/api/v1/login", midWare.LoggingMiddleware(loginController.Login))
-	router.POST("/api/v1/register", midWare.LoggingMiddleware(registerController.Create))
-	router.POST("/api/v1/users/forgot-password", midWare.LoggingMiddleware(userController.ForgotPassword))
-	router.POST("/api/v1/otp/validate", midWare.LoggingMiddleware(otpController.Validation))
-	//router.POST("/api/v1/otp/send", midWare.LoggingMiddleware(otpController.SendOtp))
-	router.POST("/api/v1/otp/resend", midWare.LoggingMiddleware(otpController.ResendOtp))
+	// Exclude Auth Middleware
+	router.POST("/api/v1/login", midWare.LoggingMiddleware(controller.LoginController.Login))
+	router.POST("/api/v1/register", midWare.LoggingMiddleware(controller.RegisterController.Create))
+	router.POST("/api/v1/users/forgot-password", midWare.LoggingMiddleware(controller.UserController.ForgotPassword))
+	router.POST("/api/v1/otp/validate", midWare.LoggingMiddleware(controller.OTPController.Validation))
+	// router.POST("/api/v1/otp/send", midWare.LoggingMiddleware(otpController.SendOtp))
+	router.POST("/api/v1/otp/resend", midWare.LoggingMiddleware(controller.OTPController.ResendOtp))
 
-	//Include Auth Middleware
-	router.POST("/api/v1/users", userController.Create)
-	router.GET("/api/v1/users", userController.FindAll)
-	router.PUT("/api/v1/users/update", midWare.WrapperMiddleware(userController.Update))
-	router.PUT("/api/v1/users/set-new-password", userController.SetNewPassword)
-	router.PUT("/api/v1/users/change-password", midWare.WrapperMiddleware(userController.UpdatePassword))
-	router.GET("/api/v1/users/:uuid", userController.FindByUUID)
-	router.DELETE("/api/v1/users/:uuid", userController.Delete)
+	// Include Auth Middleware
+	router.POST("/api/v1/users", controller.UserController.Create)
+	router.GET("/api/v1/users", controller.UserController.FindAll)
+	router.PUT("/api/v1/users/update", midWare.WrapperMiddleware(controller.UserController.Update))
+	router.PUT("/api/v1/users/set-new-password", controller.UserController.SetNewPassword)
+	router.PUT("/api/v1/users/change-password", midWare.WrapperMiddleware(controller.UserController.SetNewPassword))
+	router.GET("/api/v1/users/:uuid", controller.UserController.FindByUUID)
+	router.DELETE("/api/v1/users/:uuid", controller.UserController.Delete)
 
 	router.PanicHandler = exception.ErrorHandler
 
