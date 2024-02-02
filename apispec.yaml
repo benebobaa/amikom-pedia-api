@@ -288,7 +288,7 @@ paths:
             schema:
               type: object
               properties:
-                uuid:
+                ref_code:
                   type: string
                 password:
                   type: string

@@ -11,6 +11,9 @@ import (
 	"amikom-pedia-api/module/otp/otp_controller"
 	"amikom-pedia-api/module/otp/otp_repository"
 	"amikom-pedia-api/module/otp/otp_service"
+	"amikom-pedia-api/module/post/post_controller"
+	"amikom-pedia-api/module/post/post_repository"
+	"amikom-pedia-api/module/post/post_service"
 	"amikom-pedia-api/module/register/register_controller"
 	"amikom-pedia-api/module/register/register_repository"
 	"amikom-pedia-api/module/register/register_service"
@@ -49,6 +52,7 @@ func main() {
 	otpRepository := otp_repository.NewOtpRepository()
 	loginRepository := login_repository.NewLoginRepository()
 	imageRepository := image_repository.NewImageRepository()
+	postRepository := post_repository.NewPostRepository()
 
 	//SERVICE
 	userService := user_service.NewUserService(userRepository, otpRepository, gmailSender, db, validate)
@@ -56,14 +60,16 @@ func main() {
 	loginService := login_service.NewLoginService(tokenMaker, loginRepository, db, validate)
 	otpService := otp_service.NewOtpService(otpRepository, registerRepository, userRepository, gmailSender, db, validate, tokenMaker)
 	imageService := image_service.NewImageService(imageRepository, db, sesS3)
+	postService := post_service.NewPostService(postRepository, db, validate)
 
 	//CONTROLLER
 	userController := user_controller.NewUserController(userService, imageService)
 	registerController := register_controller.NewRegisterController(registerService)
 	loginController := login_controller.NewLoginController(loginService)
 	otpController := otp_controller.NewOtpController(otpService)
+	postController := post_controller.NewPostController(postService)
 
-	router := app.NewRouter(tokenMaker, userController, registerController, otpController, loginController)
+	router := app.NewRouter(tokenMaker, userController, registerController, otpController, loginController, postController)
 
 	server := http.Server{
 		Addr:    config.ServerAddress,

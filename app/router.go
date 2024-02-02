@@ -5,13 +5,14 @@ import (
 	"amikom-pedia-api/middleware"
 	"amikom-pedia-api/module/login/login_controller"
 	"amikom-pedia-api/module/otp/otp_controller"
+	"amikom-pedia-api/module/post/post_controller"
 	"amikom-pedia-api/module/register/register_controller"
 	"amikom-pedia-api/module/user/user_controller"
 	"amikom-pedia-api/utils/token"
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewRouter(tokenMaker token.Maker, userController user_controller.UserController, registerController register_controller.RegisterController, otpController otp_controller.OtpController, loginController login_controller.LoginController) *httprouter.Router {
+func NewRouter(tokenMaker token.Maker, userController user_controller.UserController, registerController register_controller.RegisterController, otpController otp_controller.OtpController, loginController login_controller.LoginController, postController post_controller.PostController) *httprouter.Router {
 	router := httprouter.New()
 	midWare := middleware.NewMiddleware(router, tokenMaker)
 
@@ -31,6 +32,11 @@ func NewRouter(tokenMaker token.Maker, userController user_controller.UserContro
 	router.PUT("/api/v1/users/change-password", midWare.WrapperMiddleware(userController.UpdatePassword))
 	router.GET("/api/v1/users/:uuid", userController.FindByUUID)
 	router.DELETE("/api/v1/users/:uuid", userController.Delete)
+	router.POST("/api/v1/post", midWare.WrapperMiddleware(postController.Create))
+	router.PUT("/api/v1/post/:id", midWare.WrapperMiddleware(postController.Update))
+	router.GET("/api/v1/post", postController.FindAll)
+	router.GET("/api/v1/post/:id", postController.FindById)
+	router.DELETE("/api/v1/post/:id", postController.Delete)
 
 	router.PanicHandler = exception.ErrorHandler
 
