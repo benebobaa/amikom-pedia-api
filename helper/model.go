@@ -4,6 +4,7 @@ import (
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/login"
 	"amikom-pedia-api/model/web/otp"
+	"amikom-pedia-api/model/web/post"
 	"amikom-pedia-api/model/web/register"
 	"amikom-pedia-api/model/web/user"
 	"database/sql"
@@ -65,4 +66,23 @@ func ToOtpResponseWithToken(accessToken sql.NullString) otp.CreateResponseWithTo
 		AccessToken: accessToken.String,
 	}
 
+}
+
+func ToPostResponse(p domain.Post) post.ResponsePost {
+	return post.ResponsePost{
+		ID:        p.ID,
+		Content:   p.Content,
+		UserId:    p.UserId,
+		RefPostId: p.RefPostId.String,
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+	}
+}
+
+func ToPostResponses(p []domain.Post) []post.ResponsePost {
+	var postResponses []post.ResponsePost
+	for _, category := range p {
+		postResponses = append(postResponses, ToPostResponse(category))
+	}
+	return postResponses
 }

@@ -91,7 +91,7 @@ Content-Type: application/json
 
 {
   "username_or_email":"hanifalirsyad.123@amikom.ac.id",
-  "password":"@Apayaiyaiya03"
+  "password":"@Hanif0202"
 
  }
 
@@ -101,7 +101,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "email":"hanifalirsyad.123@gmail.com"
+  "email":"hanifalirsyad.123@amikom.ac.id"
 }
 
 ### Set New Password
@@ -110,8 +110,9 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "ref_code" : "bfyykardrr46414",
-  "password" : "hanif02"
+  "ref_code" : "dbinhljtmd84835",
+  "password" : "@Hanif0202",
+  "confirm_password": "@Hanif0202"
 }
 
 ### Update Password
@@ -132,3 +133,32 @@ Content-Type: application/json
 DELETE http://localhost:8080/api/v1/users/d677a14e-9fff-4056-9f7c-cc3a997f10d8
 Accept: application/json
 Content-Type: application/json
+
+### Create Post
+POST http://localhost:8080/api/v1/post
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRiOTlhYWY5LTg0ZDctNDUwMC04NTBlLTlhMjQ3YmQ4NjI4MiIsInVzZXJuYW1lIjoienhyd3llaiIsInVzZXJfaWQiOiIzMGNjNjcyNS01Mjg4LTQxZTYtOTQ1YS05MWFmOTBkOTBmZGIiLCJpc3N1ZWRfYXQiOiIyMDI0LTAyLTAyVDAxOjE1OjA3LjI1MTg4MzU5KzA3OjAwIiwiZXhwaXJlZF9hdCI6IjIwMjQtMDItMDJUMDE6MzA6MDcuMjUxODgzODE1KzA3OjAwIn0.UfEXOZxq9oJyELkkzq3yNnRGltUnIEhRvEb7I9Olon0
+
+{
+  "content" : "ini content 20"
+}
+
+### Update Post
+PUT http://localhost:8080/api/v1/post/78192498-458c-439a-bd0e-9bdc8b15996a
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhiMWI3YWFlLWYyZTgtNGY5OS05NzYwLWY5ZTAwYzQ5ZDIyOCIsInVzZXJuYW1lIjoienhyd3llaiIsInVzZXJfaWQiOiIzMGNjNjcyNS01Mjg4LTQxZTYtOTQ1YS05MWFmOTBkOTBmZGIiLCJpc3N1ZWRfYXQiOiIyMDI0LTAyLTAxVDE3OjU4OjI4LjIzOTkyNTAwOSswNzowMCIsImV4cGlyZWRfYXQiOiIyMDI0LTAyLTAxVDE4OjEzOjI4LjIzOTkyNTMwNCswNzowMCJ9.YMIHxb1gHa5nejy0U2HSPZQn3MCKY5Lna6DbBWw386U
+
+{
+  "content" : "ini content update"
+}
+
+### Find By Id
+GET http://localhost:8080/api/v1/post/3148dc1c-e365-494b-863d-3dd325306d29
+
+### Find All Post
+GET http://localhost:8080/api/v1/post?page=2&pageSize=10
+
+### Delete Post
+DELETE http://localhost:8080/api/v1/post/78192498-458c-439a-bd0e-9bdc8b15996a
