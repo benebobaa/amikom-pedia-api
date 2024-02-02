@@ -1,9 +1,12 @@
 package app
 
 import (
-	"amikom-pedia-api/helper"
 	"database/sql"
 	"time"
+
+	"amikom-pedia-api/helper"
+
+	_ "github.com/lib/pq"
 )
 
 func NewDB(dbDriver string, dbSource string) *sql.DB {
