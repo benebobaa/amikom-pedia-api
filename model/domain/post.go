@@ -10,6 +10,7 @@ type Post struct {
 	Content   string
 	UserId    string
 	RefPostId sql.NullString
+	Images    []Image
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

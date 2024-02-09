@@ -1,14 +1,17 @@
 package domain
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 type Image struct {
-	ID        int
+	ID        sql.NullInt32
 	UserID    sql.NullString
-	FilePath  string
-	ImageType string
-	ImageUrl  string
+	FilePath  sql.NullString
+	ImageType sql.NullString
+	ImageUrl  sql.NullString
 	PostID    sql.NullString
-	CreatedAt string
-	UpdatedAt string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

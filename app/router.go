@@ -31,7 +31,7 @@ func NewRouter(config utils.Config) *httprouter.Router {
 	router.PUT("/api/v1/users/update", midWare.WrapperMiddleware(controller.UserController.Update))
 	router.PUT("/api/v1/users/set-new-password", controller.UserController.SetNewPassword)
 	router.PUT("/api/v1/users/change-password", midWare.WrapperMiddleware(controller.UserController.UpdatePassword))
-	router.GET("/api/v1/users/:uuid", controller.UserController.FindByUUID)
+	router.GET("/api/v1/users/profile", midWare.WrapperMiddleware(controller.UserController.FindByUUID))
 	router.DELETE("/api/v1/users/:uuid", controller.UserController.Delete)
 
 	//POSTS

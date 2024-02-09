@@ -5,6 +5,7 @@ import (
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/user"
+	"amikom-pedia-api/module/image/image_repository"
 	"amikom-pedia-api/module/otp/otp_repository"
 	"amikom-pedia-api/module/user/user_repository"
 	"amikom-pedia-api/utils"
@@ -19,15 +20,16 @@ import (
 )
 
 type UserServiceImpl struct {
-	UserRepository user_repository.UserRepository
-	OtpRepository  otp_repository.OtpRepository
-	GmailSender    mail.EmailSender
-	DB             *sql.DB
-	Validate       *validator.Validate
+	UserRepository  user_repository.UserRepository
+	OtpRepository   otp_repository.OtpRepository
+	ImageRepository image_repository.ImageRepository
+	GmailSender     mail.EmailSender
+	DB              *sql.DB
+	Validate        *validator.Validate
 }
 
-func NewUserService(userRepository user_repository.UserRepository, otpRepository otp_repository.OtpRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate) UserService {
-	return &UserServiceImpl{UserRepository: userRepository, OtpRepository: otpRepository, GmailSender: gmailSender, DB: DB, Validate: validate}
+func NewUserService(userRepository user_repository.UserRepository, otpRepository otp_repository.OtpRepository, imageRepository image_repository.ImageRepository, gmailSender mail.EmailSender, DB *sql.DB, validate *validator.Validate) UserService {
+	return &UserServiceImpl{UserRepository: userRepository, OtpRepository: otpRepository, ImageRepository: imageRepository, GmailSender: gmailSender, DB: DB, Validate: validate}
 }
 
 func (userService *UserServiceImpl) Create(ctx context.Context, requestUser user.CreateRequestUser) user.ResponseUser {
@@ -52,7 +54,7 @@ func (userService *UserServiceImpl) Create(ctx context.Context, requestUser user
 
 	result := userService.UserRepository.Create(ctx, tx, requestUserDomain)
 
-	return helper.ToUserResponse(result)
+	return helper.ToUserResponse(result, []domain.Image{})
 }
 
 func (userService *UserServiceImpl) Update(ctx context.Context, uuid string, requestUser user.UpdateRequestUser) user.ResponseUser {
@@ -76,7 +78,7 @@ func (userService *UserServiceImpl) Update(ctx context.Context, uuid string, req
 	}
 
 	result := userService.UserRepository.Update(ctx, tx, requestUserDomain)
-	return helper.ToUserResponse(result)
+	return helper.ToUserResponse(result, []domain.Image{})
 }
 
 func (userService *UserServiceImpl) FindByUUID(ctx context.Context, uuid string) user.ResponseUser {
@@ -97,7 +99,9 @@ func (userService *UserServiceImpl) FindByUUID(ctx context.Context, uuid string)
 		panic(exception.NewNotFoundError(err.Error()))
 	}
 
-	return helper.ToUserResponse(result)
+	images := userService.ImageRepository.FindByUserID(ctx, tx, result.UUID)
+
+	return helper.ToUserResponse(result, images)
 }
 
 func (userService *UserServiceImpl) FindAll(ctx context.Context) []user.ResponseUser {

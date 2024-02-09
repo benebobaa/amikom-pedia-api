@@ -3,10 +3,11 @@ package post_repository
 import (
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/domain"
-	"amikom-pedia-api/model/web/post"
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"log"
 )
 
 type PostRepositoryImpl struct {
@@ -41,23 +42,70 @@ func (postRepository PostRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx,
 	helper.PanicIfError(err)
 }
 
-func (postRepository PostRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, arg post.PaginationParams) []domain.Post {
-	SQL := `SELECT id, content, user_id, ref_post_id, created_at, updated_at FROM "post" ORDER BY "created_at" DESC LIMIT $1 OFFSET $2`
-	rows, err := tx.QueryContext(ctx, SQL, arg.Limit, arg.Offset)
+func (postRepository PostRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Post {
+	SQL := `
+		SELECT 
+    post.id, 
+    post.content, 
+    post.user_id, 
+    post.ref_post_id, 
+    post.created_at AS post_created_at, 
+    post.updated_at AS post_updated_at, 
+    COALESCE(
+        JSONB_AGG(
+            JSONB_BUILD_OBJECT(
+                'user_id', image.user_uuid, 
+                'file_path', image.file_path, 
+                'image_type', image.image_type, 
+                'image_url', image.image_url, 
+                'post_id', image.post_id, 
+                'created_at', image.created_at, 
+                'updated_at', image.updated_at
+            )
+        ), 
+        '[]'::jsonb
+    ) AS images
+FROM 
+    "post"
+LEFT JOIN 
+    "image" ON post.id = image.post_id
+GROUP BY 
+    post.id, post.content, post.user_id, post.ref_post_id, post.created_at, post.updated_at
+ORDER BY 
+    post.created_at DESC
+
+	`
+
+	rows, err := tx.QueryContext(ctx, SQL)
 	helper.PanicIfError(err)
 	defer rows.Close()
 
 	var posts []domain.Post
 	for rows.Next() {
-		postData := domain.Post{}
-		err := rows.Scan(&postData.ID, &postData.Content, &postData.UserId, &postData.RefPostId, &postData.CreatedAt, &postData.UpdatedAt)
+		var postData domain.Post
+		var imagesJSON string
+		err := rows.Scan(
+			&postData.ID,
+			&postData.Content,
+			&postData.UserId,
+			&postData.RefPostId,
+			&postData.CreatedAt,
+			&postData.UpdatedAt,
+			&imagesJSON,
+		)
 		helper.PanicIfError(err)
+
+		// Unmarshal the JSON array into the Images field
+
+		err = json.Unmarshal([]byte(imagesJSON), &postData.Images)
+		log.Println("Error : ", err)
+		helper.PanicIfError(err)
+
 		posts = append(posts, postData)
 	}
 
 	return posts
 }
-
 func (postRepository PostRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, post domain.Post) (domain.Post, error) {
 	SQL := `SELECT id, content, user_id, ref_post_id, created_at, updated_at FROM "post" WHERE id = $1`
 	rows, err := tx.QueryContext(ctx, SQL, post.ID)

@@ -5,6 +5,7 @@ import (
 	"amikom-pedia-api/helper"
 	"amikom-pedia-api/model/domain"
 	"amikom-pedia-api/model/web/post"
+	"amikom-pedia-api/module/image/image_repository"
 	"amikom-pedia-api/module/post/post_repository"
 	"context"
 	"database/sql"
@@ -13,13 +14,14 @@ import (
 )
 
 type PostServiceImpl struct {
-	PostRepository post_repository.PostRepository
-	DB             *sql.DB
-	Validate       *validator.Validate
+	PostRepository  post_repository.PostRepository
+	ImageRepository image_repository.ImageRepository
+	DB              *sql.DB
+	Validate        *validator.Validate
 }
 
-func NewPostService(postRepository post_repository.PostRepository, DB *sql.DB, validate *validator.Validate) PostService {
-	return &PostServiceImpl{PostRepository: postRepository, DB: DB, Validate: validate}
+func NewPostService(postRepository post_repository.PostRepository, imageRepository image_repository.ImageRepository, DB *sql.DB, validate *validator.Validate) PostService {
+	return &PostServiceImpl{PostRepository: postRepository, ImageRepository: imageRepository, DB: DB, Validate: validate}
 }
 
 func (postService PostServiceImpl) Create(ctx context.Context, id string, requestPost post.RequestPost) post.ResponsePost {
@@ -89,21 +91,18 @@ func (postService PostServiceImpl) FindAll(ctx context.Context, page int, pageSi
 
 	defer helper.CommitOrRollback(tx)
 
-	offset := (page - 1) * pageSize
+	//offset := (page - 1) * pageSize
 
-	arg := post.PaginationParams{
-		Limit:  pageSize,
-		Offset: offset,
-	}
+	//arg := post.PaginationParams{
+	//	Limit:  pageSize,
+	//	Offset: offset,
+	//}
 
-	posts := postService.PostRepository.FindAll(ctx, tx, arg)
+	posts := postService.PostRepository.FindAll(ctx, tx)
 
-	var postResponses []post.ResponsePost
-	for _, result := range posts {
-		postResponses = append(postResponses, helper.ToPostResponse(result))
-	}
+	//images := postService.ImageRepository.FindByPostID(ctx, tx, result.UUID)
 
-	return postResponses
+	return helper.ToPostResponses(posts, []domain.Image{})
 }
 
 func (postService PostServiceImpl) FindById(ctx context.Context, id string) post.ResponsePost {

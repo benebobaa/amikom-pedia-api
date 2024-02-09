@@ -12,7 +12,6 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"time"
 )
 
 type LoginServiceImpl struct {
@@ -51,7 +50,7 @@ func (loginService *LoginServiceImpl) Login(ctx context.Context, request login.L
 		panic(exception.NewUnauthorizedError("wrong password"))
 	}
 
-	accessToken, err := loginService.TokenMaker.CreateToken(result.Username, result.UUID, time.Minute*15)
+	accessToken, err := loginService.TokenMaker.CreateToken(result.Username, result.UUID)
 
 	helper.PanicIfError(err)
 

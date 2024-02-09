@@ -5,39 +5,56 @@ import (
 	"amikom-pedia-api/middleware"
 	"amikom-pedia-api/model/web"
 	"amikom-pedia-api/model/web/post"
+	"amikom-pedia-api/module/image/image_service"
 	"amikom-pedia-api/module/post/post_service"
 	"amikom-pedia-api/utils"
 	"github.com/julienschmidt/httprouter"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 type PostControllerImpl struct {
-	PostService post_service.PostService
+	PostService  post_service.PostService
+	ImageService image_service.ImageService
 }
 
-func NewPostController(postService post_service.PostService) PostController {
-	return &PostControllerImpl{PostService: postService}
+func NewPostController(postService post_service.PostService, imageService image_service.ImageService) PostController {
+	return &PostControllerImpl{PostService: postService, ImageService: imageService}
 }
 
 func (postController PostControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	postCreateRequest := post.RequestPost{}
+
 	authPayload := request.Header.Get(middleware.AuthorizationPayloadKey)
 	userNId, _ := utils.FromStringToUsernameAndUUID(authPayload)
 
 	userId := userNId.UserID
 
-	helper.ReadFromRequestBody(request, &postCreateRequest)
+	err := request.ParseMultipartForm(10 << 20) // 10 MB limit, adjust as needed
+	helper.PanicIfError(err)
 
-	postResponse := postController.PostService.Create(request.Context(), userId, postCreateRequest)
+	//Form-Data Request
+	userUpdateRequest := post.RequestPost{
+		Content: request.FormValue("content"),
+		// Add other form fields as needed
+	}
+	_, imgHeaderPost, err := request.FormFile("img_post")
+	log.Println("imgHeaderPost", err)
+
+	postResponse := postController.PostService.Create(request.Context(), userId, userUpdateRequest)
+
+	if err == nil && imgHeaderPost != nil {
+		postController.ImageService.UploadToS3Post(request.Context(), userId, postResponse.ID, imgHeaderPost)
+	}
 
 	baseResponse := web.WebResponse{
-		Code:   200,
+		Code:   201,
 		Status: "OK",
 		Data:   postResponse,
 	}
 
 	helper.WriteToResponseBody(writer, baseResponse)
+
 }
 
 func (postController PostControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {

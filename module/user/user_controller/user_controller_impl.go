@@ -83,7 +83,7 @@ func (userController *UserControllerImpl) Update(writer http.ResponseWriter, req
 		_, imgHeaderavtr, err := request.FormFile("img_avatar")
 		if imgHeaderhdr != nil || imgHeaderavtr != nil {
 
-			userController.ImageService.UploadToS3(request.Context(), userUUID, imgHeaderavtr, imgHeaderhdr)
+			userController.ImageService.UploadToS3Profile(request.Context(), userUUID, imgHeaderavtr, imgHeaderhdr)
 
 		}
 
@@ -107,9 +107,13 @@ func (userController *UserControllerImpl) Update(writer http.ResponseWriter, req
 }
 
 func (userController *UserControllerImpl) FindByUUID(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	uuid := params.ByName("uuid")
+	authPayload := request.Header.Get(middleware.AuthorizationPayloadKey)
 
-	userResponse := userController.UserService.FindByUUID(request.Context(), uuid)
+	userNId, _ := utils.FromStringToUsernameAndUUID(authPayload)
+
+	userUUID := userNId.UserID
+
+	userResponse := userController.UserService.FindByUUID(request.Context(), userUUID)
 
 	baseResponse := web.WebResponse{
 		Code:   200,

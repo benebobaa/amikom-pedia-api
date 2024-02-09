@@ -36,7 +36,7 @@ type Controller struct {
 
 func NewController(config utils.Config) *Controller {
 	db := NewDB(config.DBDriver, config.DBSource)
-	tokenMaker, err := token.NewJWTMaker(config.TokenSymetricKey)
+	tokenMaker, err := token.NewJWTMaker(config.TokenSymetricKey, config.TokenAccessDuration)
 	helper.PanicIfError(err)
 
 	gmailSender := mail.NewGmailSender(config.EmailName, config.EmailSender, config.EmailPassword)
@@ -57,19 +57,19 @@ func NewController(config utils.Config) *Controller {
 	postRepository := post_repository.NewPostRepository()
 
 	//SERVICE
-	userService := user_service.NewUserService(userRepository, otpRepository, gmailSender, db, validate)
+	userService := user_service.NewUserService(userRepository, otpRepository, imageRepository, gmailSender, db, validate)
 	registerService := register_service.NewRegisterService(registerRepository, otpRepository, gmailSender, db, validate)
 	loginService := login_service.NewLoginService(tokenMaker, loginRepository, db, validate)
 	otpService := otp_service.NewOtpService(otpRepository, registerRepository, userRepository, gmailSender, db, validate, tokenMaker)
 	imageService := image_service.NewImageService(imageRepository, db, sesS3)
-	postService := post_service.NewPostService(postRepository, db, validate)
+	postService := post_service.NewPostService(postRepository, imageRepository, db, validate)
 
 	//CONTROLLER
 	userController := user_controller.NewUserController(userService, imageService)
 	registerController := register_controller.NewRegisterController(registerService)
 	loginController := login_controller.NewLoginController(loginService)
 	otpController := otp_controller.NewOtpController(otpService)
-	postController := post_controller.NewPostController(postService)
+	postController := post_controller.NewPostController(postService, imageService)
 
 	return &Controller{
 		TokenMaker:         tokenMaker,
